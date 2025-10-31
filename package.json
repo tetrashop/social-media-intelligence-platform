@@ -7,11 +7,9 @@
   "scripts": {
     "start": "node main.cjs",
     "dev": "NODE_ENV=development node main.cjs",
-    "analyze": "node main.cjs analyze",
-    "test": "echo '🧪 تست‌ها در حال توسعه...' && exit 0",
-    "test:integration": "echo '🔗 تست‌های یکپارچه‌سازی' && exit 0",
-    "test:performance": "echo '⚡ تست‌های عملکرد' && exit 0",
-    "lint": "echo '📝 بررسی کد' && exit 0",
+    "test": "node tests/test-complete-system.cjs",
+    "test:analysis": "node tests/real-analysis-test.cjs",
+    "test:all": "npm test && npm run test:analysis",
     "setup": "node setup.cjs"
   },
   "dependencies": {
@@ -24,7 +22,21 @@
     "compression": "^1.7.0",
     "moment": "^2.29.0"
   },
-  "keywords": ["social-media", "ai", "nlp", "analysis"],
+  "keywords": [
+    "social-media",
+    "ai",
+    "artificial-intelligence",
+    "nlp",
+    "deep-learning",
+    "cognitive-analysis",
+    "personology",
+    "scientism",
+    "innovation"
+  ],
   "author": "Tetrashop AI Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tetrashop/social-media-intelligence-platform.git"
+  }
 }
