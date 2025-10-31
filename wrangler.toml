@@ -1,0 +1,7 @@
+name = "social-media-intelligence-platform"
+compatibility_date = "2024-10-30"
+main = "worker.js"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+# account_id will be set via environment variable
