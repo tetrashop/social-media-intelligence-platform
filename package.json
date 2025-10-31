@@ -1,0 +1,30 @@
+{
+  "name": "social-media-intelligence-platform",
+  "version": "1.0.0",
+  "description": "پلتفرم هوشمند تحلیل شبکه‌های اجتماعی با تفکر عمیق",
+  "main": "main.cjs",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node main.cjs",
+    "dev": "NODE_ENV=development node main.cjs",
+    "analyze": "node main.cjs analyze",
+    "test": "echo '🧪 تست‌ها در حال توسعه...' && exit 0",
+    "test:integration": "echo '🔗 تست‌های یکپارچه‌سازی' && exit 0",
+    "test:performance": "echo '⚡ تست‌های عملکرد' && exit 0",
+    "lint": "echo '📝 بررسی کد' && exit 0",
+    "setup": "node setup.cjs"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "cheerio": "^1.0.0-rc.12",
+    "natural": "^6.0.0",
+    "sqlite3": "^5.1.0",
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "compression": "^1.7.0",
+    "moment": "^2.29.0"
+  },
+  "keywords": ["social-media", "ai", "nlp", "analysis"],
+  "author": "Tetrashop AI Team",
+  "license": "MIT"
+}
