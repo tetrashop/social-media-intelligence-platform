@@ -1,4 +1,4 @@
-name = "social-media-intelligence-platform"
+name = "social-media-intelligence-platform1"
 compatibility_date = "2024-10-30"
 main = "worker.js"
 compatibility_flags = ["nodejs_compat"]
