@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 name = "tetrashop-social-analytics"
 compatibility_date = "2024-11-01"
+=======
+name = "social-media-intelligence-platform1"
+compatibility_date = "2024-10-30"
+main = "worker.js"
+>>>>>>> da3a67d638f4e43b16e7d126bb8dd7012e20cb84
 compatibility_flags = ["nodejs_compat"]
 main = "worker.js"
 workers_dev = true

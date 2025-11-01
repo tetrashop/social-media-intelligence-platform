@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+# ایجاد فایل Worker پیشرفته
+
+>>>>>>> da3a67d638f4e43b16e7d126bb8dd7012e20cb84
 // کد به‌روزرسانی شده برای Cloudflare Worker
 export default {
   async fetch(request, env, ctx) {
@@ -117,7 +122,11 @@ const advancedNLP = {
   }
 };
   }
+<<<<<<< HEAD
 };
+=======
+
+>>>>>>> da3a67d638f4e43b16e7d126bb8dd7012e20cb84
 
 // تابع محاسبه اطمینان پیشرفته
 function calculateConfidence(text, sentiment, structure) {
@@ -173,3 +182,10 @@ function generatePersonalizedRecommendations(sentiment, structure) {
   
   return recommendations;
 }
+<<<<<<< HEAD
+=======
+EOF
+
+# بروزرسانی Worker در Cloudflare
+echo "📤 در حال بروزرسانی Worker با قابلیت‌های پیشرفته..."
+>>>>>>> da3a67d638f4e43b16e7d126bb8dd7012e20cb84
