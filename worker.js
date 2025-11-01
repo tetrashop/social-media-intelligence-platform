@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+=======
+cd ~/natiq-app/tetrashop200
+
+# ابتدا از فایل اصلی backup بگیریم
+cp worker.js worker.js.backup
+
+# حالا فایل تمیز ایجاد می‌کنیم
+cat > worker.js << 'EOF'
+// worker.js - پلتفرم تحلیل شبکه‌های اجتماعی
+// نسخه Cloudflare Workers
+
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -19,8 +32,15 @@ export default {
       try {
         const { room_id, message, user_id, type = 'text' } = await request.json();
         
+<<<<<<< HEAD
         let botResponse = "سلام! سیستم محاوره فعال شد. چگونه می‌توانم کمک کنم؟";
         
+=======
+        // تولید پاسخ محاوره‌ای
+        let botResponse = "سلام! سیستم محاوره فعال شد. چگونه می‌توانم کمک کنم؟";
+        
+        // تحلیل کلمات کلیدی برای پاسخ هوشمند
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
         const messageLower = message.toLowerCase();
         if (messageLower.includes('سلام') || messageLower.includes('درود')) {
           botResponse = "سلام! خوش آمدید. سیستم تحلیل محاوره‌ای پست ۱۲۵ فعال است.";
@@ -49,7 +69,12 @@ export default {
         });
       } catch (error) {
         return new Response(JSON.stringify({ 
+<<<<<<< HEAD
           error: 'خطا در پردازش محاوره'
+=======
+          error: 'خطا در پردازش محاوره',
+          details: error.message 
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
         }), { 
           status: 500,
           headers: { 'Content-Type': 'application/json', ...corsHeaders }
@@ -57,6 +82,52 @@ export default {
       }
     }
 
+<<<<<<< HEAD
+=======
+    // دریافت تاریخچه چت
+    if (path.startsWith('/api/chat/messages/') && request.method === 'GET') {
+      const room_id = path.split('/').pop();
+      
+      return new Response(JSON.stringify({
+        room_id: parseInt(room_id),
+        room_name: `اتاق محاوره پست ${room_id}`,
+        messages: [
+          {
+            id: 1,
+            user_id: 'system',
+            message: 'سیستم محاوره برای پست ' + room_id + ' فعال شد. خوش آمدید!',
+            timestamp: new Date().toISOString(),
+            type: 'system'
+          }
+        ],
+        participants: ['user-test-' + room_id, 'assistant'],
+        active: true
+      }), {
+        headers: { 
+          'Content-Type': 'application/json',
+          ...corsHeaders
+        }
+      });
+    }
+
+    // لیست اتاق‌های چت
+    if (path === '/api/chat/rooms' && request.method === 'GET') {
+      return new Response(JSON.stringify({
+        rooms: [
+          {
+            id: 125,
+            name: 'اتاق اصلی پست ۱۲۵',
+            participants: 2,
+            last_message: 'سیستم محاوره فعال شد',
+            timestamp: new Date().toISOString()
+          }
+        ]
+      }), {
+        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      });
+    }
+
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
     // وضعیت سلامت چت
     if (path === '/api/chat/status' && request.method === 'GET') {
       return new Response(JSON.stringify({
@@ -64,12 +135,17 @@ export default {
         service: 'chat_system',
         version: '1.0.0',
         post_id: 125,
+<<<<<<< HEAD
+=======
+        features: ['real_time_chat', 'nlp_processing', 'sentiment_analysis'],
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
         timestamp: new Date().toISOString()
       }), {
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
     }
 
+<<<<<<< HEAD
     // دریافت پیام‌های اتاق
     if (path.startsWith('/api/chat/messages/') && request.method === 'GET') {
       const room_id = path.split('/').pop();
@@ -95,6 +171,15 @@ export default {
           participants: 1,
           last_message: 'سیستم فعال شد'
         }]
+=======
+    // سایر endpointهای موجود...
+    if (path === '/api/status' && request.method === 'GET') {
+      return new Response(JSON.stringify({
+        status: 'active',
+        service: 'social_media_analysis',
+        version: '4.0.0',
+        timestamp: new Date().toISOString()
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
       }), {
         headers: { 'Content-Type': 'application/json', ...corsHeaders }
       });
@@ -120,11 +205,19 @@ export default {
         <p>نسخه Cloudflare Workers - <span class="success">فعال ✅</span></p>
 
         <div class="endpoint">
+<<<<<<< HEAD
             <h3>💬 سیستم محاوره و چت - پست ۱۲۵</h3>
             <p><strong>Endpoint:</strong> POST /api/chat/send</p>
             <code>curl -X POST https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/chat/send \\
   -H "Content-Type: application/json" \\
   -d '{"room_id":125, "message":"سلام", "user_id":"test"}'</code>
+=======
+            <h3>💬 سیستم محاوره و چت</h3>
+            <p><strong>Endpoint:</strong> POST /api/chat/send</p>
+            <code>curl -X POST https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/chat/send \
+  -H "Content-Type: application/json" \
+  -d '{"room_id":125, "message":"سلام", "user_id":"test-user"}'</code>
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
         </div>
 
         <div class="endpoint">
@@ -149,3 +242,7 @@ export default {
     });
   }
 };
+<<<<<<< HEAD
+=======
+EOF
+>>>>>>> 00143c6394a8c8991141a6fd3a529dbd1b00dfc8
