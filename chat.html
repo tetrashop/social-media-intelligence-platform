@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>سیستم محاوره - پست ۱۲۵</title>
+    <style>
+        body { font-family: Tahoma; direction: rtl; margin: 20px; }
+        .chat-container { max-width: 600px; margin: 0 auto; border: 1px solid #ddd; border-radius: 10px; padding: 20px; }
+        .messages { height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 10px; }
+        .message { margin: 10px 0; padding: 8px; border-radius: 5px; }
+        .user { background: #e3f2fd; text-align: left; }
+        .bot { background: #f3e5f5; text-align: right; }
+        input, button { padding: 10px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>💬 سیستم محاوره - پست ۱۲۵</h2>
+        <div id="messages" class="messages"></div>
+        <input type="text" id="messageInput" placeholder="پیام خود را وارد کنید..." style="width: 70%">
+        <button onclick="sendMessage()">ارسال</button>
+    </div>
+
+    <script>
+        const API_BASE = "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev";
+        
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // نمایش پیام کاربر
+            addMessage('user', message);
+            input.value = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        room_id: 125,
+                        message: message,
+                        user_id: 'web-user-125'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('bot', data.bot_response);
+                } else {
+                    addMessage('bot', 'خطا در ارتباط با سرور');
+                }
+            } catch (error) {
+                addMessage('bot', 'خطا در ارسال پیام');
+            }
+        }
+        
+        function addMessage(sender, text) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // فعال کردن ارسال با Enter
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
