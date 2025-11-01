@@ -1,4 +1,120 @@
-<<<<<<< HEAD
+// 🎯 سیستم محاوره و چت - پست ۱۲۵
+router.post('/api/chat/send', async (request) => {
+  try {
+    const { room_id, message, user_id, type = 'text' } = await request.json();
+    
+    // پردازش محاوره‌ای با NLP
+    const nlpResponse = await fetch(`${request.url.replace('/chat/send', '/nlp/analyze')}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: message, post_id: room_id })
+    });
+    
+    const nlpData = await nlpResponse.json();
+    
+    // تولید پاسخ محاوره‌ای
+    let botResponse = "سلام! سیستم محاوره فعال شد. چگونه می‌توانم کمک کنم؟";
+    
+    if (nlpData.sentiment) {
+      if (nlpData.sentiment === 'positive') {
+        botResponse = "خوشحالم که حالتون خوبه! 😊 چه سوالی دارید؟";
+      } else if (nlpData.sentiment === 'negative') {
+        botResponse = "متاسفم که ناراحت هستید. چگونه می‌تونم کمک کنم؟ 🤗";
+      }
+    }
+    
+    // تحلیل کلمات کلیدی برای پاسخ هوشمند
+    if (message.includes('سلام') || message.includes('درود')) {
+      botResponse = "سلام! خوش آمدید. سیستم تحلیل محاوره‌ای پست ۱۲۵ فعال است.";
+    }
+    
+    if (message.includes('چطور') || message.includes('چگونه')) {
+      botResponse = "من یک دستیار هوشمند برای تحلیل محتوای پست ۱۲۵ هستم. می‌تونم در تحلیل متن کمک کنم!";
+    }
+
+    return new Response(JSON.stringify({
+      success: true,
+      user_message: message,
+      bot_response: botResponse,
+      room_id: room_id,
+      user_id: user_id,
+      timestamp: new Date().toISOString(),
+      nlp_analysis: nlpData
+    }), {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      }
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ 
+      error: 'خطا در پردازش محاوره',
+      details: error.message 
+    }), { 
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+});
+
+// دریافت تاریخچه چت
+router.get('/api/chat/messages/:room_id', async (request) => {
+  const room_id = request.params.room_id;
+  
+  return new Response(JSON.stringify({
+    room_id: parseInt(room_id),
+    room_name: `اتاق محاوره پست ${room_id}`,
+    messages: [
+      {
+        id: 1,
+        user_id: 'system',
+        message: 'سیستم محاوره برای پست ' + room_id + ' فعال شد. خوش آمدید!',
+        timestamp: new Date().toISOString(),
+        type: 'system'
+      }
+    ],
+    participants: ['user-test-' + room_id, 'assistant'],
+    active: true
+  }), {
+    headers: { 
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+});
+
+// لیست اتاق‌های چت
+router.get('/api/chat/rooms', async (request) => {
+  return new Response(JSON.stringify({
+    rooms: [
+      {
+        id: 125,
+        name: 'اتاق اصلی پست ۱۲۵',
+        participants: 2,
+        last_message: 'سیستم محاوره فعال شد',
+        timestamp: new Date().toISOString()
+      }
+    ]
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+});
+
+// وضعیت سلامت چت
+router.get('/api/chat/status', async (request) => {
+  return new Response(JSON.stringify({
+    status: 'active',
+    service: 'chat_system',
+    version: '1.0.0',
+    post_id: 125,
+    features: ['real_time_chat', 'nlp_processing', 'sentiment_analysis'],
+    timestamp: new Date().toISOString()
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+});<<<<<<< HEAD
 const express = require('express');
 const app = express();
 app.use(express.json());
