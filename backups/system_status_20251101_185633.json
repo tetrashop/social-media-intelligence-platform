@@ -1,0 +1,11 @@
+{
+  "service": "social-media-intelligence-platform",
+  "status": "active",
+  "version": "2.0.0",
+  "environment": "production",
+  "endpoints": [
+    "/api/analyze (POST)",
+    "/api/status (GET)"
+  ],
+  "timestamp": "2025-11-01T15:26:34.133Z"
+}

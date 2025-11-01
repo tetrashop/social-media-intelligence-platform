@@ -1,4 +1,4 @@
-name: Deploy to CloudFlare Workers
+name: Deploy to Cloudflare Workers
 
 on:
   push:
@@ -9,32 +9,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy to CloudFlare Workers
+    name: Deploy to Cloudflare Workers
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
-
+          
       - name: Install Wrangler
         run: npm install -g wrangler
-
-      - name: Deploy to CloudFlare Workers
+        
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Verify deployment
-        run: |
-          echo "🚀 Deployment successful!"
-          echo "🌐 Your Worker is live at:"
-          echo "   https://social-media-intelligence-platform.[YOUR_SUBDOMAIN].workers.dev"

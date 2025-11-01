@@ -1,0 +1,8 @@
+{
+  "name": "tetrashop-social-analytics",
+  "version": "2.0.0",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  }
+}

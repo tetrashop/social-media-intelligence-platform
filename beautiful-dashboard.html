@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پلتفرم تحلیل شبکه‌های اجتماعی</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .analysis-form {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .insight {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-right: 4px solid #27ae60;
+        }
+        
+        .recommendation {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-right: 4px solid #3498db;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .metric-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 پلتفرم تحلیل شبکه‌های اجتماعی</h1>
+            <p>سیستم هوشمند تحلیل چهاربعدی محتوای شبکه‌های اجتماعی</p>
+        </div>
+        
+        <div class="content">
+            <div class="analysis-form">
+                <h2>📊 تحلیل محتوا</h2>
+                <div class="form-group">
+                    <label for="textInput">متن مورد نظر برای تحلیل:</label>
+                    <textarea id="textInput" placeholder="متن خود را اینجا وارد کنید...">امروز در حال کار روی پروژه جدید هوش مصنوعی هستم. این پروژه شامل تحلیل داده‌های شبکه‌های اجتماعی و ارائه insights هوشمند است.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="platformSelect">پلتفرم:</label>
+                    <select id="platformSelect">
+                        <option value="telegram">تلگرام</option>
+                        <option value="twitter">توییتر</option>
+                        <option value="yahoo">یاهو مسنجر</option>
+                        <option value="general">عمومی</option>
+                    </select>
+                </div>
+                
+                <button class="btn" onclick="analyzeText()" id="analyzeBtn">شروع تحلیل</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>در حال تحلیل محتوا...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <h2>🎉 نتایج تحلیل</h2>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            const platform = document.getElementById('platformSelect').value;
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            const resultsContent = document.getElementById('resultsContent');
+            
+            if (!text.trim()) {
+                alert('لطفاً متنی برای تحلیل وارد کنید');
+                return;
+            }
+            
+            // نمایش loading
+            analyzeBtn.disabled = true;
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            
+            try {
+                const response = await fetch('http://localhost:3003/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        platform: platform
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // نمایش نتایج
+                displayResults(result);
+                
+            } catch (error) {
+                resultsContent.innerHTML = `
+                    <div class="result-item">
+                        <h3>❌ خطا در تحلیل</h3>
+                        <p>در ارتباط با سرور مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.</p>
+                        <p>خطا: ${error.message}</p>
+                    </div>
+                `;
+                results.style.display = 'block';
+            } finally {
+                analyzeBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayResults(result) {
+            const resultsContent = document.getElementById('resultsContent');
+            
+            let html = `
+                <div class="result-item">
+                    <h3>📈 اطلاعات تحلیل</h3>
+                    <p><strong>شناسه تحلیل:</strong> ${result.analysis_id}</p>
+                    <p><strong>سطح اطمینان:</strong> ${(result.confidence * 100).toFixed(1)}%</p>
+                    <p><strong>پلتفرم:</strong> ${result.platform}</p>
+                    <p><strong>زمان تحلیل:</strong> ${result.timestamp}</p>
+                </div>
+                
+                <div class="result-item">
+                    <h3>💡 بینش‌های کلیدی</h3>
+            `;
+            
+            result.insights.forEach(insight => {
+                html += `<div class="insight">${insight}</div>`;
+            });
+            
+            html += `</div><div class="result-item"><h3>🎯 توصیه‌های عملی</h3>`;
+            
+            result.recommendations.forEach(recommendation => {
+                html += `<div class="recommendation">${recommendation}</div>`;
+            });
+            
+            html += `</div>`;
+            
+            if (result.metrics) {
+                html += `
+                    <div class="result-item">
+                        <h3>📊 معیارهای فنی</h3>
+                        <div class="metrics">
+                            <div class="metric-card">
+                                <div class="metric-value">${result.metrics.text_length}</div>
+                                <div class="metric-label">طول متن</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${result.metrics.word_count}</div>
+                                <div class="metric-label">تعداد کلمات</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${result.metrics.analysis_time}</div>
+                                <div class="metric-label">زمان تحلیل</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${result.metrics.language}</div>
+                                <div class="metric-label">زبان</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsContent.innerHTML = html;
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        // تست خودکار هنگام لود صفحه
+        window.addEventListener('load', () => {
+            console.log('📊 پنل تحلیل آماده است');
+        });
+    </script>
+</body>
+</html>

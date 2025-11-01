@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>داشبورد تحلیل</title>
+    <style>
+        body { font-family: Tahoma; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        .status { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 پنل تحلیل شبکه‌های اجتماعی</h1>
+        
+        <div class="status">
+            <h3>وضعیت سیستم:</h3>
+            <div id="systemStatus">در حال بارگذاری...</div>
+        </div>
+        
+        <div>
+            <h3>راهنما:</h3>
+            <p>این سیستم از طریق خط فرمان (CLI) کار می‌کند. برای تحلیل از دستورات زیر استفاده کنید:</p>
+            <pre>
+cd ~/natiq-app/tetrashop200
+node main.cjs
+            </pre>
+            <p>یا برای نسخه تحت وب:</p>
+            <pre>
+node main-with-port.cjs
+            </pre>
+        </div>
+    </div>
+
+    <script>
+        // دریافت وضعیت سیستم
+        fetch('http://localhost:3002/api/status')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('systemStatus').innerHTML = 
+                    `<strong>سرویس:</strong> ${data.service}<br>
+                     <strong>وضعیت:</strong> ${data.status}<br>
+                     <strong>نسخه:</strong> ${data.version}<br>
+                     <strong>زمان:</strong> ${new Date(data.timestamp).toLocaleString('fa-IR')}`;
+            })
+            .catch(error => {
+                document.getElementById('systemStatus').innerHTML = 'خطا در دریافت وضعیت سیستم';
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست Cloudflare Worker - پست ۱۲۴</title>
+    <style>
+        body { font-family: Tahoma; direction: rtl; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin: 10px 0; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        .result { background: #f8f9fa; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        pre { background: #2c3e50; color: white; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 تست مستقیم Cloudflare Worker</h1>
+        <p>آدرس: <code>https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev</code></p>
+        
+        <div>
+            <h3>متن برای تحلیل:</h3>
+            <textarea id="textInput">این یک تست از سیستم تحلیل NLP پست شماره ۱۲۴ است. سیستم باید بتواند متن فارسی را به خوبی پردازش کند.</textarea>
+            <br>
+            <button onclick="testPOST()">تست POST /api/nlp/analyze</button>
+            <button onclick="testGET()">تست GET /api/status</button>
+        </div>
+        
+        <div id="result" class="result">
+            نتایج اینجا نمایش داده می‌شود...
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev';
+        
+        async function testPOST() {
+            const text = document.getElementById('textInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '⏳ در حال ارسال درخواست POST...';
+            
+            try {
+                const response = await fetch(API_URL + '/api/nlp/analyze', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        post_id: 124
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`خطای HTTP: ${response.status} - ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ پاسخ دریافت شد (کد: ${response.status})</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ خطا:</h3>
+                    <p>${error.message}</p>
+                    <p>مطمئن شوید که:</p>
+                    <ul>
+                        <li>از POST request استفاده کنید</li>
+                        <li>headerهای صحیح ارسال کنید</li>
+                        <li>بدن درخواست JSON معتبر باشد</li>
+                    </ul>
+                `;
+            }
+        }
+        
+        async function testGET() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '⏳ در حال ارسال درخواست GET...';
+            
+            try {
+                const response = await fetch(API_URL + '/api/status');
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>✅ وضعیت سیستم (کد: ${response.status})</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>❌ خطا:</h3><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

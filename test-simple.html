@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>تست ساده سیستم</title>
+</head>
+<body>
+    <h1>🧪 تست ساده سیستم NLP پست ۱۲۴</h1>
+    <button onclick="test()">تست سیستم</button>
+    <div id="result"></div>
+    
+    <script>
+        async function test() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'در حال تست...';
+            
+            try {
+                // تست وضعیت
+                const status = await fetch('http://localhost:3000/api/status');
+                const statusData = await status.json();
+                
+                // تست تحلیل
+                const analysis = await fetch('http://localhost:3000/api/nlp/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        text: 'این یک تست ساده از سیستم است',
+                        post_id: 124
+                    })
+                });
+                const analysisData = await analysis.json();
+                
+                result.innerHTML = `
+                    <h3>✅ سیستم فعال است</h3>
+                    <p>وضعیت: ${statusData.status}</p>
+                    <p>احساسات: ${analysisData.sentiment}</p>
+                    <p>کلمات کلیدی: ${analysisData.keywords.join(', ')}</p>
+                `;
+            } catch (error) {
+                result.innerHTML = '❌ خطا: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
