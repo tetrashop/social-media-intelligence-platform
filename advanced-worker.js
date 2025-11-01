@@ -1,5 +1,5 @@
 # ایجاد فایل Worker پیشرفته
-cat > advanced-worker.js << 'EOF'
+
 // کد به‌روزرسانی شده برای Cloudflare Worker
 export default {
   async fetch(request, env, ctx) {
@@ -119,7 +119,7 @@ const advancedNLP = {
   }
 };
   }
-};
+
 
 // تابع محاسبه اطمینان پیشرفته
 function calculateConfidence(text, sentiment, structure) {
