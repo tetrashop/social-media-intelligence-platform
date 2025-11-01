@@ -1,4 +1,3 @@
-# ایجاد فایل Worker کامل
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -12,7 +11,7 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    // تحلیل محتوا
+    // تحلیل محتوا - ENDPOINT جدید
     if (url.pathname === '/api/analyze' && request.method === 'POST') {
       try {
         const { text, platform = 'telegram' } = await request.json();
@@ -24,20 +23,17 @@ export default {
           insights: [
             "سیستم تحلیل محتوای فارسی فعال است",
             "متن ورودی از نظر ساختاری مناسب است",
-            "رویکرد تحلیلی در محتوا مشهود است",
-            "تمرکز بر توسعه تکنولوژی قابل توجه است"
+            "رویکرد تحلیلی در محتوا مشهود است"
           ],
           recommendations: [
             "توسعه شبکه ارتباطات تخصصی",
-            "افزایش تولید محتوای آموزشی",
-            "تعامل بیشتر با جامعه هدف"
+            "افزایش تولید محتوای آموزشی"
           ],
           metrics: {
             text_length: text.length,
             word_count: text.split(/\s+/).length,
             processing_time: "95ms",
-            language: "fa",
-            complexity: "medium"
+            language: "fa"
           },
           timestamp: new Date().toLocaleString('fa-IR'),
           version: "2.0.0",
@@ -61,17 +57,14 @@ export default {
       }
     }
 
-    // وضعیت سیستم
+    // وضعیت سیستم - ENDPOINT جدید
     if (url.pathname === '/api/status') {
       const status = {
         service: 'social-media-intelligence-platform',
         status: 'active',
         version: '2.0.0',
         environment: 'production',
-        endpoints: [
-          '/api/analyze (POST)',
-          '/api/status (GET)'
-        ],
+        endpoints: ['/api/analyze (POST)', '/api/status (GET)'],
         timestamp: new Date().toISOString()
       };
       return new Response(JSON.stringify(status, null, 2), {
@@ -121,7 +114,6 @@ export default {
             font-family: monospace;
         }
         .success { color: #27ae60; }
-        .error { color: #e74c3c; }
     </style>
 </head>
 <body>
@@ -145,7 +137,7 @@ export default {
 
         <div class="endpoint">
             <h3>✅ سیستم فعال است</h3>
-            <p>پلتفرم تحلیل شبکه‌های اجتماعی با موفقیت مستقر شده و آماده ارائه سرویس می‌باشد.</p>
+            <p>تمام endpointها اکنون در دسترس هستند.</p>
         </div>
     </div>
 </body>
@@ -158,3 +150,4 @@ export default {
       }
     });
   }
+};
