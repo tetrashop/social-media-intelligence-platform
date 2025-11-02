@@ -188,78 +188,61 @@ export default {
         </div>
         
         <div class="messages" id="messages">
-            <div class="message bot">
-                <strong>ربات:</strong> سلام! به چت هوشمند خوش آمدید. پیام خود را بنویسید...
-            </div>
+// در فایل src/index.js - بخش /chat
+if (path === '/chat') {
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت ساده - پست ۱۲۶</title>
+    <style>
+        body { font-family: Tahoma; direction: rtl; background: #667eea; margin: 0; padding: 20px; }
+        .chat-box { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; }
+        .header { background: #007bff; color: white; padding: 20px; text-align: center; }
+        .messages { height: 300px; overflow-y: auto; padding: 20px; background: #f5f5f5; }
+        .message { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .user { background: #007bff; color: white; margin-left: auto; max-width: 70%; }
+        .bot { background: white; border: 1px solid #ddd; margin-right: auto; max-width: 70%; }
+        .input-area { padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .input-area input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .input-area button { background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="chat-box">
+        <div class="header">
+            <h2>💬 چت ساده - پست ۱۲۶</h2>
         </div>
-        
+        <div class="messages" id="messages">
+            <div class="message bot">سلام! چت ساده فعال است.</div>
+        </div>
         <div class="input-area">
-            <input type="text" id="userInput" placeholder="پیام شما...">
+            <input type="text" id="userInput" placeholder="پیام...">
             <button onclick="sendMessage()">ارسال</button>
         </div>
     </div>
-
     <script>
         function sendMessage() {
-            var input = document.getElementById('userInput');
-            var message = input.value.trim();
-            var messagesDiv = document.getElementById('messages');
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
             
-            if (message === '') return;
-            
-            // نمایش پیام کاربر
-            var userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.innerHTML = '<strong>شما:</strong> ' + message;
-            messagesDiv.appendChild(userMsg);
-            
+            const messages = document.getElementById('messages');
+            messages.innerHTML += '<div class="message user">شما: ' + message + '</div>';
             input.value = '';
             
-            // ارسال به سرور
-            fetch('/api/chat/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: message,
-                    user_id: 'user123',
-                    post_id: 126
-                })
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                var botMsg = document.createElement('div');
-                botMsg.className = 'message bot';
-                botMsg.innerHTML = '<strong>ربات:</strong> ' + data.bot_response;
-                messagesDiv.appendChild(botMsg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            })
-            .catch(function(error) {
-                var errorMsg = document.createElement('div');
-                errorMsg.className = 'message bot';
-                errorMsg.innerHTML = '<strong>ربات:</strong> خطا در ارتباط';
-                messagesDiv.appendChild(errorMsg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            });
+            // پاسخ ساده
+            setTimeout(() => {
+                messages.innerHTML += '<div class="message bot">ربات: پیام شما دریافت شد (پست ۱۲۶)</div>';
+                messages.scrollTop = messages.scrollHeight;
+            }, 500);
         }
-        
-        // ارسال با دکمه Enter
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
     </script>
 </body>
 </html>`;
-        
-        return new Response(html, {
-          headers: { 'Content-Type': 'text/html; charset=utf-8' }
-        });
-      }
+  return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
 
       // 🔌 API چت
       if (path === '/api/chat/send' && request.method === 'POST') {
