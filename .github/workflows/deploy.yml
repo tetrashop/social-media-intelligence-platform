@@ -1,0 +1,39 @@
+# .github/workflows/deploy.yml
+name: 🚀 Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📦 Install Wrangler
+        run: npm install -g wrangler
+
+      - name: 🔑 Authentication
+        run: wrangler whoami
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: 🚀 Deploy Worker
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: ✅ Health Check
+        run: |
+          sleep 10
+          curl -f https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status || exit 1
