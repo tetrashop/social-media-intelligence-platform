@@ -1,29 +1,5 @@
-# dependencies
+wrangler.toml
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# production
-build/
-dist/
-
-# environment variables
-.env
-.env.local
-
-# logs
 *.log
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
 .DS_Store
-Thumbs.db
-
-# Cloudflare
-.wrangler/
+.env
