@@ -101,34 +101,211 @@ export default {
         return htmlResponse(html);
       }
 
-      // 💬 صفحه چت پیشرفته
-      if (path === '/chat') {
-        // کد کامل واسط کاربری چت که در پیام قبلی ارسال شد
-        // اینجا کوتاه شده برای نمونه
-        const html = `
-          <!DOCTYPE html>
-          <html dir="rtl" lang="fa">
-          <head>
-            <meta charset="UTF-8">
-            <title>💬 چت پیشرفته - پست ۱۲۶</title>
-            <style>/* استایل‌های کامل چت */</style>
-          </head>
-          <body>
-            <div class="container">
-              <h1>💬 چت هوشمند پیشرفته - پست ۱۲۶</h1>
-              <div id="chatApp">
-                <!-- محتوای چت -->
-              </div>
+      // در فایل src/index.js - بخش مربوط به /chat
+if (path === '/chat') {
+  const html = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>💬 چت هوشمند پیشرفته - پست ۱۲۶</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-family: Tahoma, Arial, sans-serif;
+                direction: rtl;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                color: #333;
+            }
+            
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .chat-header {
+                background: white;
+                padding: 20px;
+                border-radius: 15px 15px 0 0;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                text-align: center;
+            }
+            
+            .chat-container {
+                flex: 1;
+                background: white;
+                border-radius: 0 0 15px 15px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+            
+            .messages-container {
+                flex: 1;
+                padding: 20px;
+                overflow-y: auto;
+                background: #f8f9fa;
+            }
+            
+            .message {
+                max-width: 70%;
+                padding: 12px 16px;
+                margin: 10px 0;
+                border-radius: 12px;
+                position: relative;
+            }
+            
+            .message-user {
+                background: #007bff;
+                color: white;
+                margin-right: auto;
+                margin-left: 0;
+                border-bottom-right-radius: 5px;
+            }
+            
+            .message-bot {
+                background: white;
+                border: 1px solid #dee2e6;
+                margin-left: auto;
+                margin-right: 0;
+                border-bottom-left-radius: 5px;
+            }
+            
+            .input-container {
+                padding: 20px;
+                background: white;
+                border-top: 1px solid #dee2e6;
+                display: flex;
+                gap: 10px;
+            }
+            
+            .message-input {
+                flex: 1;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 16px;
+            }
+            
+            .send-btn {
+                background: #007bff;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            
+            .status-badge {
+                background: #28a745;
+                color: white;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                display: inline-block;
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="chat-header">
+                <h1>💬 چت هوشمند پیشرفته - پست ۱۲۶</h1>
+                <div class="status-badge">✅ سیستم فعال</div>
             </div>
-            <script>
-              // کد JavaScript کامل چت
-              console.log("چت پیشرفته پست ۱۲۶ فعال است");
-            </script>
-          </body>
-          </html>
-        `;
-        return htmlResponse(html);
-      }
+            
+            <div class="chat-container">
+                <div class="messages-container" id="messagesContainer">
+                    <div class="message message-bot">
+                        <strong>🤖 سامانه:</strong> سلام! به چت هوشمند پست ۱۲۶ خوش آمدید. چگونه می‌توانم کمک کنم؟
+                    </div>
+                </div>
+                
+                <div class="input-container">
+                    <input type="text" class="message-input" id="messageInput" placeholder="پیام خود را بنویسید...">
+                    <button class="send-btn" onclick="sendMessage()">ارسال</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            async function sendMessage() {
+                const input = document.getElementById('messageInput');
+                const message = input.value.trim();
+                const container = document.getElementById('messagesContainer');
+                
+                if (!message) return;
+                
+                // نمایش پیام کاربر
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message message-user';
+                userMsg.innerHTML = '<strong>👤 شما:</strong> ' + message;
+                container.appendChild(userMsg);
+                
+                input.value = '';
+                
+                try {
+                    const response = await fetch('/api/chat/send', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            message: message, 
+                            user_id: 'web-user',
+                            post_id: 126 
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // نمایش پاسخ ربات
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'message message-bot';
+                    botMsg.innerHTML = '<strong>🤖 سامانه:</strong> ' + data.bot_response;
+                    container.appendChild(botMsg);
+                    
+                    // اسکرول به پایین
+                    container.scrollTop = container.scrollHeight;
+                    
+                } catch (error) {
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'message message-bot';
+                    errorMsg.innerHTML = '<strong>🤖 سامانه:</strong> ❌ خطا در ارتباط با سرور';
+                    container.appendChild(errorMsg);
+                }
+                
+                // اسکرول به پایین
+                container.scrollTop = container.scrollHeight;
+            }
+            
+            // ارسال با Enter
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // فوکوس روی input هنگام لود صفحه
+            window.addEventListener('load', function() {
+                document.getElementById('messageInput').focus();
+            });
+        </script>
+    </body>
+    </html>
+  `;
+  return htmlResponse(html);
+}
 
       // 🔌 API چت
       if (path === '/api/chat/send' && request.method === 'POST') {
