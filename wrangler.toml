@@ -1,8 +1,0 @@
-{
-  "name": "social-media-intelligence-platform1",
-  "compatibility_date": "2025-11-02",
-  "main": "src/index.js",
-  "vars": {
-    "POST_NUMBER": "126"
-  }
-}
