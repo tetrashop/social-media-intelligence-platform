@@ -1,4 +1,4 @@
-// src/index.js - کد ساده و مطمئن
+// src/index.js - کد ساده و مطمئن برای پست ۱۲۷
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -37,27 +37,76 @@ export default {
     };
 
     try {
-      // 🏠 صفحه اصلی - کار می‌کند
+      // 🏠 صفحه اصلی - پست ۱۲۷
       if (path === '/' || path === '') {
         const html = `<!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه پست ۱۲۶</title>
+    <title>سامانه پست ۱۲۷ - پردازش زبان طبیعی</title>
     <style>
-        body { font-family: Tahoma; direction: rtl; background: #667eea; margin: 0; padding: 20px; color: white; text-align: center; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; color: #333; }
-        .btn { display: inline-block; padding: 15px 30px; margin: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; }
+        body { 
+            font-family: Tahoma; 
+            direction: rtl; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0; 
+            padding: 20px; 
+            color: white; 
+            text-align: center; 
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 15px 30px; 
+            margin: 10px; 
+            background: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .post-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎉 سیستم پست ۱۲۶</h1>
-        <p>سیستم فعال است - نسخه ساده و مطمئن</p>
+        <h1>🧠 سامانه پردازش زبان طبیعی - <span class="post-badge">پست ۱۲۷</span></h1>
+        <p>سیستم فعال و آماده خدمات‌رسانی - نسخه ساده و مطمئن</p>
+        
+        <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3>📋 خدمات موجود</h3>
+            <p>پردازش متون فارسی - تحلیل احساسات - دسته‌بندی محتوا</p>
+        </div>
+        
         <div>
-            <a href="/chat" class="btn">💬 چت زنده</a>
-            <a href="/admin" class="btn">🎯 پنل مدیریت</a>
+            <a href="/nlp" class="btn">🚀 ورود به سامانه NLP</a>
+            <a href="/api/status" class="btn">📊 وضعیت سیستم</a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
+            <h4>ℹ️ اطلاعات فنی</h4>
+            <p><strong>پست:</strong> ۱۲۷ | <strong>ورژن:</strong> ۱.۰.۰ | <strong>آخرین بروزرسانی:</strong> ${new Date().toLocaleString('fa-IR')}</p>
         </div>
     </div>
 </body>
@@ -65,149 +114,112 @@ export default {
         return htmlResponse(html);
       }
 
-      // 💬 صفحه چت - نسخه بسیار ساده
-      if (path === '/chat') {
+      // 🧠 صفحه NLP - پست ۱۲۷
+      if (path === '/nlp') {
         const html = `<!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>چت زنده - پست ۱۲۶</title>
+    <title>پردازش زبان طبیعی - پست ۱۲۷</title>
     <style>
-        body { font-family: Tahoma; direction: rtl; background: #667eea; margin: 0; padding: 20px; }
-        .chat-box { max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; }
-        .header { background: #007bff; color: white; padding: 20px; text-align: center; }
-        .messages { height: 400px; overflow-y: auto; padding: 20px; background: #f8f9fa; }
-        .message { margin: 10px 0; padding: 12px 16px; border-radius: 10px; max-width: 80%; }
-        .user { background: #007bff; color: white; margin-left: auto; text-align: left; }
-        .bot { background: white; border: 1px solid #ddd; margin-right: auto; }
-        .input-area { padding: 20px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; }
-        .input-area input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
-        .input-area button { background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; }
-        .home-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <a href="/" class="home-btn">🏠 صفحه اصلی</a>
-    
-    <div class="chat-box">
-        <div class="header">
-            <h1>💬 چت زنده - پست ۱۲۶</h1>
-            <p>سیستم فعال - آماده گفتگو</p>
-        </div>
-        
-        <div class="messages" id="messages">
-            <div class="message bot">
-                <strong>ربات:</strong> سلام! به چت زنده خوش آمدید. پیام خود را بنویسید...
-            </div>
-        </div>
-        
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="پیام خود را بنویسید...">
-            <button onclick="sendMessage()">ارسال</button>
-        </div>
-    </div>
-
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            const messages = document.getElementById('messages');
-            
-            if (!message) return;
-            
-            // نمایش پیام کاربر
-            messages.innerHTML += '<div class="message user"><strong>شما:</strong> ' + message + '</div>';
-            input.value = '';
-            
-            // ارسال به API
-            fetch('/api/chat/send', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    message: message,
-                    user_id: 'user123',
-                    post_id: 126
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                messages.innerHTML += '<div class="message bot"><strong>ربات:</strong> ' + data.bot_response + '</div>';
-                messages.scrollTop = messages.scrollHeight;
-            })
-            .catch(error => {
-                messages.innerHTML += '<div class="message bot"><strong>ربات:</strong> خطا در ارتباط با سرور</div>';
-                messages.scrollTop = messages.scrollHeight;
-            });
-            
-            // اسکرول به پایین
-            messages.scrollTop = messages.scrollHeight;
+        body { 
+            font-family: Tahoma; 
+            direction: rtl; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0; 
+            padding: 20px; 
         }
-        
-        // ارسال با Enter
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    </script>
-</body>
-</html>`;
-        return htmlResponse(html);
-      }
-
-      // 🎯 صفحه مدیریت - نسخه ساده
-      if (path === '/admin') {
-        const html = `<!DOCTYPE html>
-<html dir="rtl" lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت - پست ۱۲۶</title>
-    <style>
-        body { font-family: Tahoma; direction: rtl; background: #667eea; margin: 0; padding: 20px; }
-        .admin-box { max-width: 800px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; }
-        .header { background: #007bff; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
-        .stat-card { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
-        .home-btn { display: inline-block; margin: 10px; padding: 10px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 5px; }
+        .nlp-container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header { 
+            background: #007bff; 
+            color: white; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .content { 
+            padding: 30px; 
+        }
+        .analysis-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-right: 4px solid #007bff;
+        }
+        .home-btn { 
+            display: inline-block; 
+            margin: 10px; 
+            padding: 10px 20px; 
+            background: #6c757d; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .home-btn:hover {
+            background: #545b62;
+        }
+        .feature-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
     <a href="/" class="home-btn">🏠 صفحه اصلی</a>
     
-    <div class="admin-box">
+    <div class="nlp-container">
         <div class="header">
-            <h1>🎯 پنل مدیریت - پست ۱۲۶</h1>
-            <p>مدیریت ساده و کاربردی</p>
+            <h1>🧠 پردازش زبان طبیعی (NLP) - پست ۱۲۷</h1>
+            <p>سیستم پیشرفته تحلیل و پردازش متون فارسی</p>
         </div>
         
         <div class="content">
-            <h3>📊 آمار سیستم</h3>
-            <div class="stats">
-                <div class="stat-card">
-                    <h4>👥 کاربران</h4>
-                    <p>۱,۲۴۵</p>
-                </div>
-                <div class="stat-card">
-                    <h4>💬 مکالمات</h4>
-                    <p>۱۲,۵۸۹</p>
-                </div>
+            <div class="analysis-box">
+                <h3>📊 وضعیت سامانه</h3>
+                <ul>
+                    <li>✅ مدل‌های پردازش متن: فعال</li>
+                    <li>✅ تحلیل احساسات: آماده</li>
+                    <li>✅ دسته‌بندی محتوا: فعال</li>
+                    <li>✅ پردازش زبان فارسی: فعال</li>
+                </ul>
+            </div>
+
+            <h3>🎯 قابلیت‌های سامانه</h3>
+            
+            <div class="feature-card">
+                <h4>📝 تحلیل احساسات</h4>
+                <p>تشخیص خودکار احساسات مثبت، منفی و خنثی در متن</p>
             </div>
             
-            <h3>🔧 وضعیت سرویس</h3>
-            <ul>
-                <li>✅ چت زنده: فعال</li>
-                <li>✅ API: در دسترس</li>
-                <li>✅ پایگاه داده: متصل</li>
-                <li>✅ پست: ۱۲۶</li>
-            </ul>
+            <div class="feature-card">
+                <h4>🏷️ دسته‌بندی موضوعی</h4>
+                <p>طبقه‌بندی متون به دسته‌های مختلف موضوعی</p>
+            </div>
             
-            <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
-                <h4>📝 اطلاعات فنی</h4>
+            <div class="feature-card">
+                <h4>🔤 پردازش زبان فارسی</h4>
+                <p>تحلیل تخصصی متون فارسی با پشتیبانی از ویژگی‌های زبان فارسی</p>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background: #e7f3ff; border-radius: 10px;">
+                <h4>📈 اطلاعات فنی پست ۱۲۷</h4>
+                <p><strong>شناسه پست:</strong> ۱۲۷</p>
+                <p><strong>ورژن مدل:</strong> NLP-Persian-v2.0</p>
                 <p><strong>آخرین بروزرسانی:</strong> ${new Date().toLocaleString('fa-IR')}</p>
-                <p><strong>ورژن:</strong> ۱.۰.۰</p>
+                <p><strong>وضعیت:</strong> فعال و پایدار</p>
             </div>
         </div>
     </div>
@@ -216,56 +228,57 @@ export default {
         return htmlResponse(html);
       }
 
-      // 🔌 API چت
-      if (path === '/api/chat/send' && method === 'POST') {
-        const { message = '' } = await request.json();
-        
-        let response = "سلام! سیستم چت زنده پست ۱۲۶ در خدمت شماست.";
-        
-        if (message.includes('۱۲۶') || message.includes('126')) {
-          response = "✅ بله! این سیستم مربوط به پست شماره ۱۲۶ می‌باشد.";
-        }
-        if (message.includes('سلام')) {
-          response = "سلام! 🌟 به چت زنده خوش آمدید.";
-        }
-        if (message.includes('چطور')) {
-          response = "من یک دستیار ساده هستم. می‌توانم به سوالات شما پاسخ دهم.";
-        }
-
-        return jsonResponse({
-          success: true,
-          user_message: message,
-          bot_response: response,
-          post_id: 126,
-          timestamp: new Date().toISOString(),
-          version: "1.0.0"
-        });
-      }
-
-      // 📊 وضعیت سیستم
+      // 📊 وضعیت سیستم - پست ۱۲۷
       if (path === '/api/status') {
         return jsonResponse({
           status: "active",
           service: "social-media-intelligence-platform",
           version: "1.0.0",
-          post_id: 126,
+          post_id: 127,
           timestamp: new Date().toISOString(),
-          endpoints: ["/", "/chat", "/admin", "/api/chat/send", "/api/status"]
+          features: {
+            nlp: true,
+            sentiment_analysis: true,
+            text_classification: true,
+            persian_language_support: true
+          },
+          endpoints: ["/", "/nlp", "/api/status"]
+        });
+      }
+
+      // تست API ساده برای NLP
+      if (path === '/api/nlp/analyze' && method === 'POST') {
+        const { text = '' } = await request.json();
+        
+        // شبیه‌سازی تحلیل ساده
+        const analysis = {
+          sentiment: text.includes('خوب') || text.includes('عالی') ? 'positive' : 
+                     text.includes('بد') || text.includes('ضعیف') ? 'negative' : 'neutral',
+          word_count: text.split(' ').length,
+          contains_persian: /[\u0600-\u06FF]/.test(text),
+          post_id: 127
+        };
+        
+        return jsonResponse({
+          success: true,
+          analysis: analysis,
+          post_id: 127,
+          timestamp: new Date().toISOString()
         });
       }
 
       // سایر مسیرها
       return jsonResponse({
         error: "صفحه یافت نشد",
-        available_endpoints: ["/", "/chat", "/admin", "/api/chat/send", "/api/status"],
-        post_id: 126
+        available_endpoints: ["/", "/nlp", "/api/status", "/api/nlp/analyze"],
+        post_id: 127
       }, 404);
 
     } catch (error) {
       return jsonResponse({
         error: "خطای سرور",
         message: error.message,
-        post_id: 126
+        post_id: 127
       }, 500);
     }
   }
