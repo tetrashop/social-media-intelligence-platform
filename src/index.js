@@ -242,26 +242,7 @@ if (path === '/chat') {
 
         <script>
             async function sendMessage() {
-                const input = document.getElementById('messageInput');
-                const message = input.value.trim();
-                const container = document.getElementById('messagesContainer');
-                
-                if (!message) return;
-                
-                // نمایش پیام کاربر
-                const userMsg = document.createElement('div');
-                userMsg.className = 'message message-user';
-                userMsg.innerHTML = '<strong>👤 شما:</strong> ' + message;
-                container.appendChild(userMsg);
-                
-                input.value = '';
-                
-                try {
-                    const response = await fetch('/api/chat/send', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            message: message, 
+
 // در فایل src/index.js - بخش مربوط به /chat
 if (path === '/chat') {
   const html = `<!DOCTYPE html>
