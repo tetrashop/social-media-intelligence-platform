@@ -357,6 +357,101 @@ if (path === '/chat') {
             </div>
         </div>
         
+// در فایل src/index.js - بخش مربوط به /chat
+if (path === '/chat') {
+  const html = `<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💬 چت هوشمند - پست ۱۲۶</title>
+    <style>
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            direction: rtl;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: left;
+        }
+        .bot-message {
+            background: white;
+            border: 1px solid #ddd;
+            margin-right: auto;
+        }
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+        #messageInput {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <h1>💬 چت هوشمند - پست ۱۲۶</h1>
+            <p>سیستم فعال و آماده استفاده</p>
+        </div>
+        
+        <div class="messages" id="messagesContainer">
+            <div class="message bot-message">
+                <strong>🤖 سامانه:</strong> سلام! به چت هوشمند خوش آمدید. چگونه می‌توانم کمک کنم؟
+            </div>
+        </div>
+        
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="پیام خود را اینجا بنویسید...">
             <button onclick="sendMessage()">ارسال</button>
