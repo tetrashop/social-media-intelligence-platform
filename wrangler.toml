@@ -1,0 +1,11 @@
+name = "social-media-intelligence-platform"
+compatibility_date = "2024-11-02"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+workers_dev = true
+
+# اگر از KV یا دیگر سرویس‌ها استفاده می‌کنید
+# [[kv_namespaces]]
+# binding = "MY_KV"
+# id = "kv_id_here"
