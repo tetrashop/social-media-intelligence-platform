@@ -37,17 +37,50 @@ export default {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سیستم پست ۱۲۶</title>
     <style>
-        body { font-family: Tahoma; direction: rtl; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
-        .btn { display: inline-block; padding: 15px 30px; margin: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 8px; }
+        body { 
+            font-family: Tahoma, Arial; 
+            direction: rtl; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            margin: 0; 
+            padding: 20px; 
+            color: #333; 
+            min-height: 100vh;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            text-align: center; 
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 15px 30px; 
+            margin: 10px; 
+            background: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎉 سیستم پست ۱۲۶</h1>
-        <p>سیستم چت هوشمند فعال است</p>
-        <a href="/chat" class="btn">💬 رفتن به چت</a>
-        <a href="/admin" class="btn">🎯 پنل مدیریت</a>
+        <h1>🎉 سیستم پست ۱۲۶ - فعال</h1>
+        <p>سیستم چت هوشمند با رابط کاربری کامل</p>
+        <div style="margin: 30px 0;">
+            <a href="/chat" class="btn">💬 رفتن به چت</a>
+            <a href="/admin" class="btn">🎯 پنل مدیریت</a>
+        </div>
+        <p style="color: #666; margin-top: 20px;">
+            آخرین بروزرسانی: ${new Date().toLocaleString('fa-IR')}
+        </p>
     </div>
 </body>
 </html>`;
@@ -56,7 +89,7 @@ export default {
         });
       }
 
-      // 💬 صفحه چت - نسخه ساده و کارآمد
+      // 💬 صفحه چت - نسخه بسیار ساده و مطمئن
       if (path === '/chat') {
         const html = `<!DOCTYPE html>
 <html dir="rtl" lang="fa">
@@ -65,24 +98,22 @@ export default {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💬 چت هوشمند - پست ۱۲۶</title>
     <style>
+        /* استایل‌های بسیار ساده و مطمئن */
         body {
-            font-family: Tahoma, Arial, sans-serif;
+            font-family: Tahoma, Arial;
             direction: rtl;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
+            padding: 20px;
+            color: #333;
         }
-        .chat-container {
+        .chat-box {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 0 auto;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 10px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 90vh;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .header {
             background: #007bff;
@@ -91,114 +122,100 @@ export default {
             text-align: center;
         }
         .messages {
-            flex: 1;
-            padding: 20px;
+            height: 400px;
             overflow-y: auto;
-            background: #f8f9fa;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            padding: 20px;
+            background: #f5f5f5;
         }
         .message {
-            padding: 12px 16px;
-            border-radius: 12px;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 10px;
             max-width: 80%;
-            word-wrap: break-word;
         }
-        .user-message {
+        .user {
             background: #007bff;
             color: white;
-            align-self: flex-end;
-            border-bottom-right-radius: 3px;
+            margin-left: auto;
+            text-align: left;
         }
-        .bot-message {
+        .bot {
             background: white;
-            border: 1px solid #dee2e6;
-            align-self: flex-start;
-            border-bottom-left-radius: 3px;
+            border: 1px solid #ddd;
+            margin-right: auto;
         }
         .input-area {
-            padding: 20px;
+            padding: 15px;
             background: white;
             border-top: 1px solid #eee;
             display: flex;
             gap: 10px;
         }
-        #messageInput {
+        .input-area input {
             flex: 1;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             font-size: 16px;
-            font-family: Tahoma;
         }
-        button {
+        .input-area button {
             background: #28a745;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 12px 20px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
-            font-family: Tahoma;
         }
-        button:hover {
-            background: #218838;
-        }
-        .home-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
+        .home-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 15px;
             background: #6c757d;
             color: white;
-            padding: 10px 15px;
-            border-radius: 6px;
             text-decoration: none;
-            font-size: 14px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <a href="/" class="home-btn">🏠 خانه</a>
+    <a href="/" class="home-link">🏠 بازگشت به خانه</a>
     
-    <div class="chat-container">
+    <div class="chat-box">
         <div class="header">
             <h1>💬 چت هوشمند - پست ۱۲۶</h1>
-            <p>سیستم فعال و آماده استفاده</p>
+            <p>سیستم فعال - آماده گفتگو</p>
         </div>
         
-        <div class="messages" id="messagesContainer">
-            <div class="message bot-message">
-                <strong>🤖 سامانه:</strong> سلام! به چت هوشمند پست ۱۲۶ خوش آمدید. چگونه می‌توانم کمک کنم؟
+        <div class="messages" id="messages">
+            <div class="message bot">
+                <strong>ربات:</strong> سلام! به چت هوشمند خوش آمدید. پیام خود را بنویسید...
             </div>
         </div>
         
         <div class="input-area">
-            <input type="text" id="messageInput" placeholder="پیام خود را اینجا بنویسید...">
+            <input type="text" id="userInput" placeholder="پیام شما...">
             <button onclick="sendMessage()">ارسال</button>
         </div>
     </div>
 
     <script>
         function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            const container = document.getElementById('messagesContainer');
+            var input = document.getElementById('userInput');
+            var message = input.value.trim();
+            var messagesDiv = document.getElementById('messages');
             
-            if (!message) return;
+            if (message === '') return;
             
             // نمایش پیام کاربر
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user-message';
-            userDiv.innerHTML = '<strong>👤 شما:</strong> ' + message;
-            container.appendChild(userDiv);
+            var userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = '<strong>شما:</strong> ' + message;
+            messagesDiv.appendChild(userMsg);
             
             input.value = '';
             
-            // اسکرول به پایین
-            container.scrollTop = container.scrollHeight;
-            
-            // ارسال به API
+            // ارسال به سرور
             fetch('/api/chat/send', {
                 method: 'POST',
                 headers: {
@@ -206,36 +223,35 @@ export default {
                 },
                 body: JSON.stringify({
                     message: message,
-                    user_id: 'web-user',
+                    user_id: 'user123',
                     post_id: 126
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                const botDiv = document.createElement('div');
-                botDiv.className = 'message bot-message';
-                botDiv.innerHTML = '<strong>🤖 سامانه:</strong> ' + data.bot_response;
-                container.appendChild(botDiv);
-                container.scrollTop = container.scrollHeight;
+            .then(function(response) {
+                return response.json();
             })
-            .catch(error => {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'message bot-message';
-                errorDiv.innerHTML = '<strong>🤖 سامانه:</strong> ❌ خطا در ارتباط با سرور';
-                container.appendChild(errorDiv);
-                container.scrollTop = container.scrollHeight;
+            .then(function(data) {
+                var botMsg = document.createElement('div');
+                botMsg.className = 'message bot';
+                botMsg.innerHTML = '<strong>ربات:</strong> ' + data.bot_response;
+                messagesDiv.appendChild(botMsg);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(function(error) {
+                var errorMsg = document.createElement('div');
+                errorMsg.className = 'message bot';
+                errorMsg.innerHTML = '<strong>ربات:</strong> خطا در ارتباط';
+                messagesDiv.appendChild(errorMsg);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
         }
         
-        // ارسال با Enter
-        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        // ارسال با دکمه Enter
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
-
-        // فوکوس روی input
-        document.getElementById('messageInput').focus();
     </script>
 </body>
 </html>`;
@@ -252,13 +268,13 @@ export default {
         let response = "سلام! سیستم چت هوشمند پست ۱۲۶ در خدمت شماست. چگونه می‌توانم کمک کنم؟";
         
         if (message.includes('۱۲۶') || message.includes('126')) {
-          response = "✅ بله! این سیستم مربوط به پست شماره ۱۲۶ می‌باشد. سیستم کاملاً فعال است.";
+          response = "✅ بله! این سیستم مربوط به پست شماره ۱۲۶ می‌باشد. همه چیز به خوبی کار می‌کند!";
         }
         if (message.includes('سلام') || message.includes('درود')) {
-          response = "سلام! 🌟 به چت هوشمند خوش آمدید. چطور می‌تونم کمک کنم؟";
+          response = "سلام! 🌟 به سامانه چت هوشمند خوش آمدید. چطور می‌تونم کمک کنم؟";
         }
-        if (message.includes('چطور') || message.includes('چگونه')) {
-          response = "من یک دستیار هوشمند هستم. می‌تونم در زمینه‌های مختلف کمک کنم.";
+        if (message.includes('چت') || message.includes('گفتگو')) {
+          response = "من یک دستیار هوشمند برای گفتگو هستم. می‌تونم در زمینه‌های مختلف با شما صحبت کنم.";
         }
 
         return jsonResponse({
@@ -279,14 +295,14 @@ export default {
           version: "2.1.0",
           post_id: 126,
           timestamp: new Date().toISOString(),
-          features: ["chat", "api", "responsive"],
-          endpoints: ["/", "/chat", "/api/chat/send", "/api/status"]
+          endpoints: ["/", "/chat", "/api/chat/send", "/api/status"],
+          message: "سیستم با رابط کاربری ساده فعال است"
         });
       }
 
-      // سایر مسیرها
+      // صفحه ۴۰۴
       return jsonResponse({
-        error: "مسیر یافت نشد",
+        error: "صفحه یافت نشد",
         available_endpoints: ["/", "/chat", "/api/chat/send", "/api/status"],
         post_id: 126
       }, 404);
