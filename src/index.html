@@ -176,64 +176,903 @@ export default {
         });
       }
 
-      // 💬 صفحه چت
-      if (path === '/chat') {
-        const html = `
-          <!DOCTYPE html>
-          <html dir="rtl" lang="fa">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>💬 چت هوشمند - پست ۱۲۶</title>
-            <style>
-              * { margin: 0; padding: 0; box-sizing: border-box; }
-              body { 
-                font-family: 'Tahoma', 'Arial', sans-serif;
+      // در فایل src/index.js - بخش مربوط به /chat
+if (path === '/chat') {
+  const html = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="fa">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>💬 چت هوشمند پیشرفته - پست ۱۲۶</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary-color: #007bff;
+                --secondary-color: #6c757d;
+                --success-color: #28a745;
+                --danger-color: #dc3545;
+                --warning-color: #ffc107;
+                --info-color: #17a2b8;
+                --light-color: #f8f9fa;
+                --dark-color: #343a40;
+                --bg-color: #ffffff;
+                --text-color: #333333;
+                --border-color: #dee2e6;
+                --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                --radius: 12px;
+            }
+
+            [data-theme="dark"] {
+                --bg-color: #1a1a1a;
+                --text-color: #ffffff;
+                --border-color: #444444;
+                --light-color: #2d2d2d;
+                --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 direction: rtl;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 min-height: 100vh;
-                color: #333;
-                padding: 20px;
-              }
-              .container { 
-                max-width: 800px;
+                color: var(--text-color);
+                transition: all 0.3s ease;
+            }
+
+            .container {
+                max-width: 1200px;
                 margin: 0 auto;
-              }
-              .card {
-                background: white;
-                border-radius: 20px;
-                padding: 40px;
-                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-                margin: 20px 0;
-              }
-              .btn {
-                display: inline-block;
-                padding: 10px 20px;
-                background: #007bff;
+                padding: 20px;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* هدر چت */
+            .chat-header {
+                background: var(--bg-color);
+                padding: 20px;
+                border-radius: var(--radius) var(--radius) 0 0;
+                box-shadow: var(--shadow);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .chat-info {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .avatar {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, var(--primary-color), #0056b3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 color: white;
-                text-decoration: none;
-                border-radius: 10px;
-                margin: 10px 0;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="card">
-                <h1>💬 چت هوشمند - پست ۱۲۶</h1>
-                <p>این صفحه چت هوشمند سیستم پست ۱۲۶ می‌باشد.</p>
-                <a href="/" class="btn">🏠 بازگشت به صفحه اصلی</a>
-                <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-                  <p><strong>✅ سیستم چت فعال است</strong></p>
-                  <p>از endpoint <code>/api/chat/send</code> برای چت استفاده کنید.</p>
+                font-weight: bold;
+                font-size: 20px;
+            }
+
+            .user-status {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                color: var(--success-color);
+            }
+
+            .status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--success-color);
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
+            }
+
+            .chat-actions {
+                display: flex;
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                border: none;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                background: var(--light-color);
+                color: var(--text-color);
+            }
+
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow);
+            }
+
+            .btn-primary {
+                background: var(--primary-color);
+                color: white;
+            }
+
+            /* بدنه چت */
+            .chat-container {
+                flex: 1;
+                background: var(--bg-color);
+                display: flex;
+                flex-direction: column;
+                border-radius: 0 0 var(--radius) var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .messages-container {
+                flex: 1;
+                padding: 20px;
+                overflow-y: auto;
+                background: var(--light-color);
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            /* استایل پیام‌ها */
+            .message {
+                max-width: 70%;
+                padding: 15px;
+                border-radius: var(--radius);
+                position: relative;
+                animation: messageSlide 0.3s ease;
+            }
+
+            @keyframes messageSlide {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .message-user {
+                align-self: flex-end;
+                background: var(--primary-color);
+                color: white;
+                border-bottom-right-radius: 5px;
+            }
+
+            .message-bot {
+                align-self: flex-start;
+                background: var(--bg-color);
+                color: var(--text-color);
+                border: 1px solid var(--border-color);
+                border-bottom-left-radius: 5px;
+            }
+
+            .message-time {
+                font-size: 12px;
+                opacity: 0.7;
+                margin-top: 5px;
+                display: block;
+            }
+
+            .message-actions {
+                position: absolute;
+                top: -25px;
+                right: 10px;
+                background: var(--bg-color);
+                border-radius: 20px;
+                padding: 5px;
+                box-shadow: var(--shadow);
+                display: none;
+            }
+
+            .message:hover .message-actions {
+                display: flex;
+            }
+
+            .action-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 5px;
+                border-radius: 50%;
+                transition: background 0.3s;
+            }
+
+            .action-btn:hover {
+                background: var(--light-color);
+            }
+
+            /* نوار ورود پیام */
+            .input-container {
+                padding: 20px;
+                background: var(--bg-color);
+                border-top: 1px solid var(--border-color);
+                display: flex;
+                gap: 10px;
+                align-items: flex-end;
+            }
+
+            .input-wrapper {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .message-input {
+                width: 100%;
+                padding: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                background: var(--bg-color);
+                color: var(--text-color);
+                font-size: 16px;
+                resize: none;
+                min-height: 60px;
+                max-height: 120px;
+                transition: border-color 0.3s;
+            }
+
+            .message-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+            .input-actions {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .file-input {
+                display: none;
+            }
+
+            .file-label {
+                cursor: pointer;
+                padding: 10px;
+                border-radius: 50%;
+                transition: background 0.3s;
+            }
+
+            .file-label:hover {
+                background: var(--light-color);
+            }
+
+            .send-btn {
+                background: var(--primary-color);
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: all 0.3s;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .send-btn:hover {
+                background: #0056b3;
+                transform: translateY(-2px);
+            }
+
+            .send-btn:disabled {
+                background: var(--secondary-color);
+                cursor: not-allowed;
+                transform: none;
+            }
+
+            /* نوار کناری */
+            .sidebar {
+                position: fixed;
+                left: -300px;
+                top: 0;
+                width: 300px;
+                height: 100vh;
+                background: var(--bg-color);
+                box-shadow: var(--shadow);
+                transition: left 0.3s ease;
+                z-index: 1000;
+                padding: 20px;
+                overflow-y: auto;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .sidebar-section {
+                margin-bottom: 25px;
+            }
+
+            .sidebar-title {
+                font-size: 16px;
+                margin-bottom: 15px;
+                color: var(--primary-color);
+            }
+
+            .theme-switch {
+                display: flex;
+                gap: 10px;
+            }
+
+            .theme-option {
+                flex: 1;
+                text-align: center;
+                padding: 10px;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .theme-option.active {
+                background: var(--primary-color);
+                color: white;
+                border-color: var(--primary-color);
+            }
+
+            .search-box {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius);
+                background: var(--bg-color);
+                color: var(--text-color);
+            }
+
+            /* وضعیت‌های سیستم */
+            .typing-indicator {
+                display: none;
+                align-self: flex-start;
+                background: var(--bg-color);
+                padding: 10px 15px;
+                border-radius: var(--radius);
+                border: 1px solid var(--border-color);
+                font-style: italic;
+                color: var(--secondary-color);
+            }
+
+            .typing-indicator.show {
+                display: block;
+            }
+
+            .connection-status {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 10px 15px;
+                border-radius: var(--radius);
+                background: var(--success-color);
+                color: white;
+                box-shadow: var(--shadow);
+                z-index: 1001;
+                display: none;
+            }
+
+            .connection-status.show {
+                display: block;
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            /* رسپانسیو */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 10px;
+                }
+
+                .message {
+                    max-width: 85%;
+                }
+
+                .chat-header {
+                    padding: 15px;
+                }
+
+                .input-container {
+                    padding: 15px;
+                }
+
+                .sidebar {
+                    width: 100%;
+                    left: -100%;
+                }
+            }
+
+            /* اسکرول بار سفارشی */
+            .messages-container::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .messages-container::-webkit-scrollbar-track {
+                background: var(--light-color);
+            }
+
+            .messages-container::-webkit-scrollbar-thumb {
+                background: var(--secondary-color);
+                border-radius: 3px;
+            }
+
+            .messages-container::-webkit-scrollbar-thumb:hover {
+                background: var(--primary-color);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- هدر چت -->
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h2>دستیار هوشمند</h2>
+                        <div class="user-status">
+                            <div class="status-dot"></div>
+                            <span>آنلاین</span>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                <div class="chat-actions">
+                    <button class="btn" onclick="toggleSidebar()">
+                        <i class="fas fa-cog"></i>
+                        تنظیمات
+                    </button>
+                    <button class="btn btn-primary" onclick="clearChat()">
+                        <i class="fas fa-trash"></i>
+                        پاک کردن چت
+                    </button>
+                </div>
             </div>
-          </body>
-          </html>
-        `;
-        return htmlResponse(html);
-      }
+
+            <!-- بدنه چت -->
+            <div class="chat-container">
+                <div class="messages-container" id="messagesContainer">
+                    <!-- پیام‌ها اینجا نمایش داده می‌شوند -->
+                    <div class="message message-bot">
+                        <div class="message-content">
+                            سلام! 👋 به سیستم چت هوشمند پست ۱۲۶ خوش آمدید. من اینجام تا به شما کمک کنم.
+                        </div>
+                        <span class="message-time">${new Date().toLocaleTimeString('fa-IR')}</span>
+                    </div>
+                </div>
+
+                <!-- نشانگر تایپ -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <i class="fas fa-ellipsis-h"></i>
+                    در حال تایپ...
+                </div>
+
+                <!-- نوار ورود پیام -->
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea 
+                            class="message-input" 
+                            id="messageInput" 
+                            placeholder="پیام خود را اینجا بنویسید..."
+                            rows="1"
+                        ></textarea>
+                        <div class="input-actions">
+                            <input type="file" id="fileInput" class="file-input" accept="image/*,.pdf,.doc,.docx">
+                            <label for="fileInput" class="file-label">
+                                <i class="fas fa-paperclip"></i>
+                            </label>
+                            <button class="btn" onclick="toggleTheme()">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                            <button class="send-btn" id="sendButton" onclick="sendMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                                ارسال
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- وضعیت اتصال -->
+            <div class="connection-status" id="connectionStatus">
+                <i class="fas fa-wifi"></i>
+                متصل شد
+            </div>
+        </div>
+
+        <!-- نوار کناری تنظیمات -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>تنظیمات چت</h3>
+                <button class="btn" onclick="toggleSidebar()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">تم نمایش</h4>
+                <div class="theme-switch">
+                    <div class="theme-option active" data-theme="light" onclick="setTheme('light')">
+                        <i class="fas fa-sun"></i>
+                        روشن
+                    </div>
+                    <div class="theme-option" data-theme="dark" onclick="setTheme('dark')">
+                        <i class="fas fa-moon"></i>
+                        تاریک
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">جستجو در چت</h4>
+                <input type="text" class="search-box" id="searchBox" placeholder="جستجو در مکالمات...">
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">اطلاعات سیستم</h4>
+                <div style="font-size: 14px; line-height: 1.6;">
+                    <p><strong>پست:</strong> ۱۲۶</p>
+                    <p><strong>ورژن:</strong> ۲.۱.۰</p>
+                    <p><strong>آخرین بروزرسانی:</strong> ${new Date().toLocaleDateString('fa-IR')}</p>
+                    <p><strong>وضعیت:</strong> <span style="color: var(--success-color);">فعال ✅</span></p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h4 class="sidebar-title">راهنما</h4>
+                <div style="font-size: 14px; line-height: 1.6;">
+                    <p>• برای ارسال پیام از دکمه ارسال یا Enter استفاده کنید</p>
+                    <p>• می‌توانید فایل‌های مختلف ارسال کنید</p>
+                    <p>• چت به صورت خودکار ذخیره می‌شود</p>
+                    <p>• از دکمه تنظیمات برای شخصی‌سازی استفاده کنید</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // مدیریت وضعیت
+            class ChatManager {
+                constructor() {
+                    this.messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+                    this.theme = localStorage.getItem('chatTheme') || 'light';
+                    this.isOnline = true;
+                    this.init();
+                }
+
+                init() {
+                    this.setTheme(this.theme);
+                    this.loadMessages();
+                    this.setupEventListeners();
+                    this.showConnectionStatus();
+                }
+
+                setupEventListeners() {
+                    const messageInput = document.getElementById('messageInput');
+                    const sendButton = document.getElementById('sendButton');
+
+                    // ارسال با Enter
+                    messageInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            this.sendMessage();
+                        }
+                    });
+
+                    // تنظیم ارتفاع خودکار textarea
+                    messageInput.addEventListener('input', (e) => {
+                        e.target.style.height = 'auto';
+                        e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                    });
+
+                    // بررسی آنلاین/آفلاین
+                    window.addEventListener('online', () => this.handleConnectionChange(true));
+                    window.addEventListener('offline', () => this.handleConnectionChange(false));
+                }
+
+                async sendMessage() {
+                    const input = document.getElementById('messageInput');
+                    const message = input.value.trim();
+                    
+                    if (!message) return;
+
+                    // اضافه کردن پیام کاربر
+                    this.addMessage(message, 'user');
+                    input.value = '';
+                    input.style.height = 'auto';
+
+                    // غیرفعال کردن دکمه ارسال
+                    document.getElementById('sendButton').disabled = true;
+
+                    // نمایش وضعیت تایپ
+                    this.showTypingIndicator();
+
+                    try {
+                        const response = await fetch('/api/chat/send', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ 
+                                message: message, 
+                                user_id: 'web-user',
+                                post_id: 126,
+                                timestamp: new Date().toISOString()
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        // پنهان کردن وضعیت تایپ
+                        this.hideTypingIndicator();
+                        
+                        // اضافه کردن پاسخ ربات
+                        this.addMessage(data.bot_response, 'bot', data);
+                        
+                    } catch (error) {
+                        this.hideTypingIndicator();
+                        this.addMessage('متأسفانه در ارتباط با سرور مشکلی پیش آمده. لطفاً دوباره تلاش کنید.', 'bot');
+                        console.error('Error:', error);
+                    } finally {
+                        document.getElementById('sendButton').disabled = false;
+                    }
+                }
+
+                addMessage(content, type, data = {}) {
+                    const message = {
+                        id: Date.now(),
+                        content,
+                        type,
+                        timestamp: new Date().toISOString(),
+                        ...data
+                    };
+
+                    this.messages.push(message);
+                    this.saveMessages();
+                    this.renderMessage(message);
+                    this.scrollToBottom();
+                }
+
+                renderMessage(message) {
+                    const container = document.getElementById('messagesContainer');
+                    const messageElement = document.createElement('div');
+                    
+                    messageElement.className = `message message-${message.type}`;
+                    messageElement.innerHTML = `
+                        <div class="message-content">${this.formatMessage(message.content)}</div>
+                        <span class="message-time">${new Date(message.timestamp).toLocaleTimeString('fa-IR')}</span>
+                        <div class="message-actions">
+                            <button class="action-btn" onclick="copyMessage('${message.id}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteMessage('${message.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+
+                    container.appendChild(messageElement);
+                }
+
+                formatMessage(content) {
+                    // تبدیل لینک‌ها به تگ <a>
+                    const urlRegex = /(https?:\/\/[^\s]+)/g;
+                    return content.replace(urlRegex, url => 
+                        `<a href="${url}" target="_blank" style="color: inherit; text-decoration: underline;">${url}</a>`
+                    );
+                }
+
+                showTypingIndicator() {
+                    document.getElementById('typingIndicator').classList.add('show');
+                    this.scrollToBottom();
+                }
+
+                hideTypingIndicator() {
+                    document.getElementById('typingIndicator').classList.remove('show');
+                }
+
+                scrollToBottom() {
+                    const container = document.getElementById('messagesContainer');
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                saveMessages() {
+                    localStorage.setItem('chatMessages', JSON.stringify(this.messages));
+                }
+
+                loadMessages() {
+                    const container = document.getElementById('messagesContainer');
+                    container.innerHTML = '';
+                    
+                    this.messages.forEach(message => this.renderMessage(message));
+                    this.scrollToBottom();
+                }
+
+                clearMessages() {
+                    if (confirm('آیا از پاک کردن تمام پیام‌ها مطمئن هستید؟')) {
+                        this.messages = [];
+                        this.saveMessages();
+                        this.loadMessages();
+                        
+                        // اضافه کردن پیام خوش‌آمدگویی
+                        this.addMessage('سلام! 👋 چت پاک شد. چگونه می‌توانم کمک کنم؟', 'bot');
+                    }
+                }
+
+                setTheme(theme) {
+                    this.theme = theme;
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('chatTheme', theme);
+                    
+                    // بروزرسانی وضعیت دکمه‌های تم
+                    document.querySelectorAll('.theme-option').forEach(option => {
+                        option.classList.toggle('active', option.dataset.theme === theme);
+                    });
+                }
+
+                toggleTheme() {
+                    const newTheme = this.theme === 'light' ? 'dark' : 'light';
+                    this.setTheme(newTheme);
+                }
+
+                handleConnectionChange(online) {
+                    this.isOnline = online;
+                    this.showConnectionStatus();
+                }
+
+                showConnectionStatus() {
+                    const statusElement = document.getElementById('connectionStatus');
+                    
+                    if (this.isOnline) {
+                        statusElement.style.background = 'var(--success-color)';
+                        statusElement.innerHTML = '<i class="fas fa-wifi"></i> متصل شد';
+                    } else {
+                        statusElement.style.background = 'var(--danger-color)';
+                        statusElement.innerHTML = '<i class="fas fa-wifi-slash"></i> اتصال قطع شد';
+                    }
+                    
+                    statusElement.classList.add('show');
+                    setTimeout(() => statusElement.classList.remove('show'), 3000);
+                }
+
+                searchMessages(query) {
+                    if (!query.trim()) {
+                        this.loadMessages();
+                        return;
+                    }
+
+                    const filteredMessages = this.messages.filter(message => 
+                        message.content.toLowerCase().includes(query.toLowerCase())
+                    );
+
+                    const container = document.getElementById('messagesContainer');
+                    container.innerHTML = '';
+                    
+                    filteredMessages.forEach(message => this.renderMessage(message));
+                }
+            }
+
+            // ایجاد instance از ChatManager
+            const chatManager = new ChatManager();
+
+            // توابع global برای استفاده در HTML
+            function sendMessage() {
+                chatManager.sendMessage();
+            }
+
+            function clearChat() {
+                chatManager.clearMessages();
+            }
+
+            function toggleTheme() {
+                chatManager.toggleTheme();
+            }
+
+            function setTheme(theme) {
+                chatManager.setTheme(theme);
+            }
+
+            function toggleSidebar() {
+                document.getElementById('sidebar').classList.toggle('open');
+            }
+
+            function copyMessage(messageId) {
+                const message = chatManager.messages.find(m => m.id == messageId);
+                if (message) {
+                    navigator.clipboard.writeText(message.content).then(() => {
+                        alert('پیام کپی شد!');
+                    });
+                }
+            }
+
+            function deleteMessage(messageId) {
+                if (confirm('آیا از حذف این پیام مطمئن هستید؟')) {
+                    chatManager.messages = chatManager.messages.filter(m => m.id != messageId);
+                    chatManager.saveMessages();
+                    chatManager.loadMessages();
+                }
+            }
+
+            // مدیریت جستجو
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                chatManager.searchMessages(e.target.value);
+            });
+
+            // مدیریت ارسال فایل
+            document.getElementById('fileInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        alert('حجم فایل باید کمتر از ۵ مگابایت باشد.');
+                        return;
+                    }
+                    
+                    chatManager.addMessage(`فایل ارسال شده: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`, 'user');
+                    
+                    // در اینجا می‌توانید فایل را آپلود کنید
+                    console.log('File selected:', file);
+                }
+            });
+
+            // بستن سایدبار با کلیک خارج
+            document.addEventListener('click', (e) => {
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.contains(e.target) && !e.target.closest('.btn[onclick="toggleSidebar()"]')) {
+                    sidebar.classList.remove('open');
+                }
+            });
+
+            // لود اولیه
+            window.addEventListener('load', () => {
+                chatManager.scrollToBottom();
+            });
+        </script>
+    </body>
+    </html>
+  `;
+  return htmlResponse(html);
+}
 
       // 🎯 پنل مدیریت
       if (path === '/admin') {
