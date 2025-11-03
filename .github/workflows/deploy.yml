@@ -1,4 +1,3 @@
-# .github/workflows/deploy.yml
 name: 🚀 Deploy to Cloudflare Workers
 
 on:
@@ -17,7 +16,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
 
       - name: 📦 Install Wrangler
         run: npm install -g wrangler
@@ -30,8 +28,5 @@ jobs:
 
       - name: ✅ Health Check
         run: |
-          echo "⏳ Waiting for deployment..."
           sleep 10
-          echo "🔍 Testing deployment..."
           curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" || exit 0
-          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status" || exit 0

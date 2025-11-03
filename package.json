@@ -3,6 +3,6 @@
   "version": "5.0.0",
   "type": "module",
   "scripts": {
-    "deploy": "echo 'Deployment handled by GitHub Actions'"
+    "deploy": "echo 'Deployed via GitHub Actions'"
   }
 }
