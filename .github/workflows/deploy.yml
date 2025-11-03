@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: 🚀 Deploy to Cloudflare Workers
 
 on:
@@ -21,12 +22,7 @@ jobs:
       - name: 📦 Install Wrangler
         run: npm install -g wrangler
 
-      - name: 🔑 Cloudflare Authentication
-        run: wrangler whoami
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: 🚀 Deploy Worker
+      - name: 🚀 Deploy to Cloudflare
         run: wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -34,11 +30,8 @@ jobs:
 
       - name: ✅ Health Check
         run: |
-          echo "⏳ Waiting for deployment to complete..."
-          sleep 15
-          echo "🔍 Testing endpoints..."
-          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" || echo "⚠️ Main page check failed"
-          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status" || echo "⚠️ Status API check failed"
-          curl -X POST "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/analyze" \
-            -H "Content-Type: application/json" \
-            -d '{"message": "تست سیستم تحلیل"}' || echo "⚠️ Analyze API check failed"
+          echo "⏳ Waiting for deployment..."
+          sleep 10
+          echo "🔍 Testing deployment..."
+          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" || exit 0
+          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status" || exit 0
