@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت هوشمند - پست ۱۲۷</title>
+    <style>
+        body {
+            font-family: Tahoma;
+            direction: rtl;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .input-area {
+            padding: 20px;
+            background: white;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #007bff;
+        }
+        button {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .message {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 15px;
+            animation: fadeIn 0.3s;
+        }
+        .user-message {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            margin-left: 20%;
+            margin-right: 0;
+        }
+        .bot-message {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #333;
+            margin-right: 20%;
+            margin-left: 0;
+            border: 1px solid #bbdefb;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
+            <h1>💬 چت هوشمند - پست ۱۲۷</h1>
+            <p>دستیار هوشمند برای تحلیل متن و گفتگو</p>
+        </div>
+        <div class="messages" id="messages">
+            <div class="message bot-message">
+                <strong>🤖 ربات:</strong> سلام! به چت هوشمند خوش آمدید. چطور می‌تونم کمک کنم؟
+            </div>
+        </div>
+        <div class="typing-indicator" id="typing">
+            <strong>🤖 ربات:</strong> در حال تایپ...
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="پیام خود را بنویسید..." autocomplete="off">
+            <button onclick="sendMessage()">ارسال</button>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const messages = document.getElementById('messages');
+            const typing = document.getElementById('typing');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            // نمایش پیام کاربر
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            userMessageDiv.innerHTML = '<strong>👤 شما:</strong> ' + message;
+            messages.appendChild(userMessageDiv);
+
+            input.value = '';
+            input.disabled = true;
+            
+            // نمایش تایپینگ
+            typing.style.display = 'block';
+            messages.scrollTop = messages.scrollHeight;
+
+            try {
+                // ارسال درخواست به API
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                
+                // مخفی کردن تایپینگ
+                typing.style.display = 'none';
+                
+                // نمایش پاسخ ربات
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot-message';
+                botMessageDiv.innerHTML = '<strong>🤖 ربات:</strong> ' + data.response;
+                messages.appendChild(botMessageDiv);
+
+            } catch (error) {
+                // مخفی کردن تایپینگ
+                typing.style.display = 'none';
+                
+                // نمایش خطا
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.className = 'message bot-message';
+                errorMessageDiv.innerHTML = '<strong>🤖 ربات:</strong> متأسفانه خطایی رخ داد. لطفاً دوباره تلاش کنید.';
+                messages.appendChild(errorMessageDiv);
+            }
+
+            input.disabled = false;
+            input.focus();
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // فعال کردن ارسال با Enter
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // فوکوس خودکار روی input
+        document.getElementById('userInput').focus();
+    </script>
+</body>
+</html>
