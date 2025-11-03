@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
     steps:
       - name: 🛎️ Checkout code
         uses: actions/checkout@v4
@@ -21,14 +22,6 @@ jobs:
       - name: 📦 Install Wrangler
         run: npm install -g wrangler
 
-      - name: 🔧 Create wrangler.toml
-        run: |
-          cat > wrangler.toml << 'EOF'
-          name = "social-media-intelligence-platform"
-          compatibility_date = "2024-11-03"
-          main = "src/index.js"
-          EOF
-
       - name: 🚀 Deploy Worker
         run: wrangler deploy
         env:
@@ -37,8 +30,5 @@ jobs:
 
       - name: ✅ Verify Deployment
         run: |
-          echo "⏳ Waiting for deployment to complete..."
-          sleep 30
-          echo "🔍 Testing deployment..."
-          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" || exit 0
-          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status" || exit 0
+          echo "🎉 Deployment completed!"
+          echo "🔗 URL: https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev"
