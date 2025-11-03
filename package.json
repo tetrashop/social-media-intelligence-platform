@@ -1,20 +1,8 @@
 {
   "name": "social-media-intelligence-platform",
-  "version": "2.0.0",
-  "description": "Social Media Intelligence Platform with Advanced NLP",
+  "version": "5.0.0",
   "type": "module",
   "scripts": {
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
-    "predeploy": "npm install --include=optional"
-  },
-  "dependencies": {
-    "@cloudflare/wrangler": "^3.0.0"
-  },
-  "devDependencies": {
-    "wrangler": "^3.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "deploy": "echo 'Deployment handled by GitHub Actions'"
   }
 }
