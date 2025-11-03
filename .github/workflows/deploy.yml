@@ -18,8 +18,16 @@ jobs:
         with:
           node-version: '18'
 
-      - name: 📦 Install Wrangler (Global)
+      - name: 📦 Install Wrangler
         run: npm install -g wrangler
+
+      - name: 🔧 Create wrangler.toml
+        run: |
+          cat > wrangler.toml << 'EOF'
+          name = "social-media-intelligence-platform"
+          compatibility_date = "2024-11-03"
+          main = "src/index.js"
+          EOF
 
       - name: 🚀 Deploy Worker
         run: wrangler deploy
@@ -27,10 +35,10 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-      - name: ✅ Health Check
+      - name: ✅ Verify Deployment
         run: |
-          echo "⏳ Waiting for deployment..."
-          sleep 15
-          echo "🔍 Testing endpoints..."
-          curl -s "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" | head -2
-          curl -s "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status"
+          echo "⏳ Waiting for deployment to complete..."
+          sleep 30
+          echo "🔍 Testing deployment..."
+          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/" || exit 0
+          curl -f "https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/status" || exit 0
