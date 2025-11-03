@@ -462,64 +462,78 @@ if (path === '/chat') {
                 });
             }
 
-            // 🔌 API تحلیل
+                        // 🔌 API تحلیل
             if (path === '/api/analyze' && method === 'POST') {
                 try {
                     const { text } = await request.json();
                     
-                    if (!text) {
+                    if (!text || text.trim().length === 0) {
                         return new Response(JSON.stringify({
                             success: false,
                             error: "متن ارسال نشده است"
                         }), {
                             status: 400,
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Access-Control-Allow-Origin': '*'
+                            }
                         });
                     }
                     
-                    // تحلیل ساده متن
+                    // تحلیل ساده و مطمئن متن
+                    const words = text.split(' ').filter(word => word.length > 0);
+                    const textLength = text.length;
+                    
+                    // محاسبه امتیازات
+                    const scientificScore = Math.min(textLength / 15, 10);
+                    const emotionalScore = Math.min((text.match(/خوشحال|خوب|عالی|مثبت|ناراحت|بد|منفی|غمگین/g) || []).length * 3, 10);
+                    const artisticScore = Math.min((text.match(/مانند|مثل|شبیه|چون|نظیر/g) || []).length * 3, 10);
+                    const literaryScore = Math.min((textLength / 100) + (words.length / 25), 10);
+                    const socialScore = Math.min((text.match(/جامعه|مردم|فرهنگ|اجتماع|روابط/g) || []).length * 3, 10);
+                    
+                    const overallScore = (
+                        scientificScore +
+                        emotionalScore +
+                        artisticScore +
+                        literaryScore +
+                        socialScore
+                    ) / 5;
+                    
                     const analysis = {
                         scientific: {
-                            score: Math.min(text.length / 10, 10),
-                            terms_found: text.includes('علم') || text.includes('تحقیق') ? ['مفاهیم علمی'] : [],
-                            complexity: text.length > 50 ? "high" : "medium"
+                            score: scientificScore.toFixed(1),
+                            terms_found: text.match(/علم|تحقیق|دانش|تکنولوژی|داده/g) || [],
+                            complexity: textLength > 100 ? "بالا" : "متوسط"
                         },
                         emotional: {
-                            score: Math.min((text.match(/خوشحال|خوب|عالی|ناراحت|بد/g) || []).length * 2, 10),
-                            dominant_emotion: text.includes('خوشحال') ? "positive" : text.includes('ناراحت') ? "negative" : "neutral",
-                            intensity: (text.match(/خوشحal|خوب|عالی|ناراحت|بد/g) || []).length
+                            score: emotionalScore.toFixed(1),
+                            dominant_emotion: text.includes('خوشحال') || text.includes('خوب') ? "مثبت" : 
+                                            text.includes('ناراحت') || text.includes('بد') ? "منفی" : "خنثی",
+                            intensity: Math.min(emotionalScore, 10)
                         },
                         artistic: {
-                            creativity_score: Math.min((text.match(/مانند|مثل|شبیه/g) || []).length * 2, 10),
+                            creativity_score: artisticScore.toFixed(1),
                             metaphorical_language: text.match(/مانند|مثل|شبیه/g) || []
                         },
                         literary: {
-                            complexity_score: Math.min((text.length / 100) + (text.split(' ').length / 20), 10),
-                            word_count: text.split(' ').length,
-                            structure: text.split(' ').length > 20 ? "complex" : "simple"
+                            complexity_score: literaryScore.toFixed(1),
+                            word_count: words.length,
+                            structure: words.length > 25 ? "پیچیده" : "ساده"
                         },
                         social: {
-                            social_relevance: Math.min((text.match(/جامعه|مردم|فرهنگ|اجتماع/g) || []).length * 2, 10),
+                            social_relevance: socialScore.toFixed(1),
                             terms_found: text.match(/جامعه|مردم|فرهنگ|اجتماع/g) || []
                         }
                     };
-                    
-                    const overall_score = (
-                        analysis.scientific.score +
-                        analysis.emotional.score +
-                        analysis.artistic.creativity_score +
-                        analysis.literary.complexity_score +
-                        analysis.social.social_relevance
-                    ) / 5;
                     
                     return new Response(JSON.stringify({
                         success: true,
                         text: text,
                         analysis: analysis,
-                        overall_score: overall_score.toFixed(1),
+                        overall_score: overallScore.toFixed(1),
                         post_id: 127,
                         timestamp: new Date().toISOString(),
-                        version: "8.0.1"
+                        version: "8.0.2"
                     }), {
                         headers: { 
                             'Content-Type': 'application/json',
@@ -534,12 +548,13 @@ if (path === '/chat') {
                         message: error.message
                     }), {
                         status: 500,
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        }
                     });
                 }
-            }
-
-            // 📊 API وضعیت
+            }\n\n            // 📊 API وضعیت
             if (path === '/api/status') {
                 const data = {
                     status: "active",
