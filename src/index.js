@@ -142,11 +142,100 @@ export default {
 <body>
     <div class="chat-container">
         <div class="header">
+// اضافه کردن این بخش به فایل src/index.js در قسمت صفحه چت
+
+// 💬 صفحه چت هوشمند
+if (path === '/chat') {
+    const html = `<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چت هوشمند - پست ۱۲۷</title>
+    <style>
+        body { 
+            font-family: Tahoma; 
+            direction: rtl; 
+            background: #667eea;
+            margin: 0; 
+            padding: 20px;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .input-area {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .message {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        .bot-message {
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin-right: auto;
+            margin-left: 0;
+        }
+        .typing-indicator {
+            color: #666;
+            font-style: italic;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="header">
             <h1>💬 چت هوشمند - پست ۱۲۷</h1>
+            <p>ربات پاسخگو فعال است</p>
         </div>
         <div class="messages" id="messages">
-            <div style="padding: 15px; background: #e7f3ff; margin: 10px; border-radius: 10px;">
-                <strong>🤖 ربات:</strong> سلام! به چت هوشمند خوش آمدید.
+            <div class="bot-message">
+                <strong>🤖 ربات:</strong> سلام! من یک دستیار هوشمند هستم. می‌تونم متن شما رو تحلیل کنم و پاسخ بدم.
             </div>
         </div>
         <div class="input-area">
@@ -154,34 +243,134 @@ export default {
             <button onclick="sendMessage()">ارسال</button>
         </div>
     </div>
+
     <script>
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('userInput');
             const messages = document.getElementById('messages');
-            const message = input.value;
+            const message = input.value.trim();
             
             if (!message) return;
             
-            messages.innerHTML += '<div style="padding: 15px; background: #007bff; color: white; margin: 10px; border-radius: 10px; margin-left: 20%;"><strong>👤 شما:</strong> ' + message + '</div>';
-            
-            setTimeout(() => {
-                messages.innerHTML += '<div style="padding: 15px; background: #e7f3ff; margin: 10px; border-radius: 10px; margin-right: 20%;"><strong>🤖 ربات:</strong> پیام شما دریافت شد! (پست ۱۲۷)</div>';
-                messages.scrollTop = messages.scrollHeight;
-            }, 1000);
-            
+            // نمایش پیام کاربر
+            messages.innerHTML += '<div class="user-message"><strong>👤 شما:</strong> ' + message + '</div>';
             input.value = '';
+            
+            // نمایش تایپ کردن ربات
+            messages.innerHTML += '<div class="typing-indicator" id="typing">🤖 ربات در حال تایپ...</div>';
+            messages.scrollTop = messages.scrollHeight;
+            
+            try {
+                // ارسال به API برای تحلیل و دریافت پاسخ
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: message})
+                });
+                
+                const data = await response.json();
+                
+                // حذف نشانگر تایپ
+                document.getElementById('typing').remove();
+                
+                if (data.success) {
+                    // تولید پاسخ هوشمند بر اساس تحلیل
+                    const botResponse = generateBotResponse(message, data.analysis);
+                    messages.innerHTML += '<div class="bot-message"><strong>🤖 ربات:</strong> ' + botResponse + '</div>';
+                } else {
+                    messages.innerHTML += '<div class="bot-message"><strong>🤖 ربات:</strong> متأسفانه در پردازش پیام مشکل پیش آمد.</div>';
+                }
+                
+            } catch (error) {
+                // حذف نشانگر تایپ
+                const typingElement = document.getElementById('typing');
+                if (typingElement) typingElement.remove();
+                
+                // پاسخ fallback
+                const fallbackResponse = generateFallbackResponse(message);
+                messages.innerHTML += '<div class="bot-message"><strong>🤖 ربات:</strong> ' + fallbackResponse + '</div>';
+            }
+            
             messages.scrollTop = messages.scrollHeight;
         }
+
+        function generateBotResponse(userMessage, analysis) {
+            const emotionalState = analysis.emotional.dominant_emotion;
+            const overallScore = analysis.overall_score;
+            
+            // پاسخ‌های مبتنی بر احساسات
+            if (emotionalState === 'positive' && overallScore > 6) {
+                return "چه عالی! از شنیدن این خبر خوشحال شدم. 😊";
+            } else if (emotionalState === 'negative') {
+                return "متأسفم که اینطور احساس می‌کنی. اگر بخواهی می‌تونم کمک کنم.";
+            }
+            
+            // پاسخ‌های مبتنی بر محتوا
+            if (userMessage.includes('سلام') || userMessage.includes('درود')) {
+                return "سلام! چطور می‌تونم کمک کنم؟ 🌟";
+            }
+            
+            if (userMessage.includes('چطور') || userMessage.includes('چگونه')) {
+                return "من می‌تونم متن شما رو از جنبه‌های مختلف تحلیل کنم: علمی، احساسی، هنری، ادبی و اجتماعی.";
+            }
+            
+            if (userMessage.includes('تشکر') || userMessage.includes('ممنون')) {
+                return "خوشحالم که مفید بودم! 😊";
+            }
+            
+            if (userMessage.includes('۱۲۷') || userMessage.includes('127')) {
+                return "بله! این سیستم مربوط به پست شماره ۱۲۷ می‌باشد. 🎯";
+            }
+            
+            if (userMessage.includes('پست')) {
+                return "این سامانه مربوط به پست ۱۲۷ هست و برای تحلیل متون فارسی طراحی شده.";
+            }
+            
+            // پاسخ عمومی بر اساس تحلیل
+            if (analysis.scientific.score > 7) {
+                return "متن شما از لحاظ علمی بسیار قوی است! 🔬";
+            } else if (analysis.artistic.creativity_score > 6) {
+                return "چه متن خلاقانه‌ای! 🎨";
+            } else if (analysis.literary.complexity_score > 5) {
+                return "ساختار زبانی پیچیده‌ای داره. 📚";
+            }
+            
+            // پاسخ پیش‌فرض
+            return "پیام شما دریافت شد! امتیاز کلی تحلیل: " + overallScore + " از 10. " +
+                   "احساس غالب: " + (emotionalState === 'positive' ? 'مثبت 😊' : emotionalState === 'negative' ? 'منفی 😔' : 'خنثی 😐');
+        }
+
+        function generateFallbackResponse(userMessage) {
+            // پاسخ‌های fallback وقتی API در دسترس نیست
+            const responses = [
+                "پیام شما رو دریافت کردم!",
+                "متوجه شدم، ممنون از پیامتون.",
+                "نکته جالبی گفتید!",
+                "پیام شما ثبت شد.",
+                "از شنیدن نظرات شما خوشحال شدم."
+            ];
+            
+            // پاسخ‌های خاص برای برخی کلمات کلیدی
+            if (userMessage.includes('سلام')) return "سلام! چطور می‌تونم کمک کنم؟";
+            if (userMessage.includes('خداحافظ')) return "خداحافظ! موفق باشید 👋";
+            if (userMessage.includes('تشکر')) return "خواهش می‌کنم! 😊";
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        // ارسال با Enter
         document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
     </script>
 </body>
 </html>`;
-                return new Response(html, {
-                    headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                });
-            }
+    return new Response(html, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+    });
+        }
 
             // 📊 صفحه تحلیل
             if (path === '/analyze') {
