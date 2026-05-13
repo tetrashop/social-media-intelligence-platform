@@ -1,102 +1,44 @@
-#!/usr/bin/env node
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const compression = require('compression');
+const path = require('path');
+const { initDatabase } = require('./database');
+const chatRouter = require('./routes/chat');
 
-console.log(`
-🚀 پلتفرم هوشمند تحلیل شبکه‌های اجتماعی
-📅 نسخه: 1.0.0
-⏰ زمان: ${new Date().toLocaleString('fa-IR')}
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-🎯 در حال راه‌اندازی سیستم...
-`);
+app.use(cors());
+app.use(compression());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// سیستم اصلی
-class SocialMediaIntelligencePlatform {
-  constructor() {
-    this.version = "1.0.0";
-    this.initialized = false;
-  }
+app.use('/api/chat', chatRouter);
 
-  async initialize() {
-    console.log('🧠 راه‌اندازی موتور تحلیل شناختی...');
-    console.log('🌐 بارگذاری اکسپلوررهای شبکه‌های اجتماعی...');
-    console.log('📊 تنظیم سیستم تحلیل چهاربعدی...');
-    
-    await this.loadModules();
-    this.initialized = true;
-    
-    console.log('✅ سیستم آماده کار است!');
-  }
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'chat.html'));
+});
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
-  async loadModules() {
-    const modules = [
-      'پردازش شناختی عمیق',
-      'اکسپلورر یاهو مسنجر',
-      'اکسپلورر تلگرام',
-      'اکسپلورر توییتر',
-      'تحلیل‌گر شخص‌شناسی',
-      'تحلیل‌گر علم‌گرایی',
-      'سیستم NLP چندزبانه'
-    ];
+app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal server error' });
+});
 
-    for (const module of modules) {
-      console.log(`📦 بارگذاری: ${module}`);
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-  }
-
-  async analyzeSample() {
-    console.log('\n🔍 شروع تحلیل نمونه...');
-    
-    const sampleData = {
-      user: "user_12345",
-      platforms: ["telegram", "twitter"],
-      dimensions: ["personology", "scientism"]
-    };
-
-    console.log('📊 تحلیل بعد شخص‌شناسی...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('🔬 تحلیل بعد علم‌گرایی...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log('💡 تولید گزارش هوشمند...');
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    return {
-      analysis_id: "sample_" + Date.now(),
-      confidence: 0.85,
-      insights: [
-        "الگوی رفتاری پایدار شناسایی شد",
-        "رویکرد علمی در محتوا مشهود است",
-        "خلاقیت در حل مسئله قابل توجه است"
-      ],
-      recommendations: [
-        "توسعه مهارت‌های ارتباطی",
-        "افزایش تعامل در شبکه‌های تخصصی"
-      ]
-    };
-  }
-}
-
-// اجرای سیستم
-const platform = new SocialMediaIntelligencePlatform();
-
-async function main() {
-  await platform.initialize();
-  
-  const results = await platform.analyzeSample();
-  
-  console.log('\n🎉 تحلیل با موفقیت انجام شد!');
-  console.log('📈 نتایج:');
-  console.log(JSON.stringify(results, null, 2));
-  
-  console.log('\n📋 دستورات موجود:');
-  console.log('  npm start      - راه‌اندازی سیستم');
-  console.log('  npm run analyze - تحلیل نمونه');
-  console.log('  npm test       - اجرای تست‌ها');
-}
-
-if (require.main === module) {
-  main().catch(console.error);
-}
-
-module.exports = platform;
+initDatabase()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 پلتفرم هوشمند روی http://localhost:${PORT} فعال است`);
+    });
+  })
+  .catch(err => {
+    console.error('Failed to initialize database:', err);
+    process.exit(1);
+  });
