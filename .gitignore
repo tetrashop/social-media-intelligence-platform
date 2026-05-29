@@ -1,7 +1,4 @@
-wrangler.toml
-node_modules/
-*.log
-.DS_Store
+node_modules
+data
 .env
-dist/
-build/
+*.log

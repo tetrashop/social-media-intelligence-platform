@@ -1,83 +1,5 @@
-const { NeuralNetwork, TextVectorizer, DEFAULT_VOCABULARY, INTENT_LABELS } = require('./deep-learning');
-const { saveModel, loadModel } = require('./kv-store');
-
-let nn = null;
-const vectorizer = new TextVectorizer(DEFAULT_VOCABULARY);
-let modelReady = false;
-
-// بارگذاری یا ساخت مدل
-async function initModel() {
-  try {
-    const saved = await loadModel();
-    if (saved) {
-      nn = NeuralNetwork.fromJSON(saved);
-      console.log('✓ مدل از حافظه بارگذاری شد');
-    } else {
-      nn = new NeuralNetwork(DEFAULT_VOCABULARY.length, 12, INTENT_LABELS.length, 0.1);
-      console.log('✓ مدل جدید ساخته شد (آموزش اولیه انجام می‌شود)');
-      await trainDefaultExamples();
-    }
-  } catch (e) {
-    console.error('خطای بارگذاری مدل:', e);
-    nn = null;
-  }
-  modelReady = true;
-}
-
-// آموزش اولیه روی داده‌های پیش‌فرض
-async function trainDefaultExamples() {
-  const examples = [
-    { text: 'سلام', intent: 'greeting' }, { text: 'hello', intent: 'greeting' },
-    { text: 'درود', intent: 'greeting' }, { text: 'خوبی', intent: 'greeting' },
-    { text: 'bye', intent: 'farewell' }, { text: 'خداحافظ', intent: 'farewell' },
-    { text: 'goodbye', intent: 'farewell' },
-    { text: 'thanks', intent: 'thanks' }, { text: 'مرسی', intent: 'thanks' },
-    { text: 'help', intent: 'help' }, { text: 'کمک', intent: 'help' },
-    { text: 'who are you', intent: 'about' }, { text: 'about', intent: 'about' },
-    { text: 'تحلیل کن', intent: 'analysis' }, { text: 'analyz', intent: 'analysis' },
-    { text: 'چطوری', intent: 'general' }
-  ];
-  for (const ex of examples) {
-    const inputVec = vectorizer.vectorize(ex.text);
-    const outputVec = Array(INTENT_LABELS.length).fill(0);
-    const idx = INTENT_LABELS.indexOf(ex.intent);
-    if (idx !== -1) outputVec[idx] = 1;
-    nn.train(inputVec, outputVec);
-  }
-  await saveModel(nn.toJSON());
-  console.log('✓ آموزش اولیه ذخیره شد');
-}
-
-// تابع عمومی برای آموزش با دیتاست خارجی
-async function trainOnDataset(dataset) {
-  if (!nn) throw new Error('مدل هنوز آماده نیست');
-  for (const item of dataset) {
-    if (!item.text || !item.intent) continue;
-    const inputVec = vectorizer.vectorize(item.text);
-    const outputVec = Array(INTENT_LABELS.length).fill(0);
-    const idx = INTENT_LABELS.indexOf(item.intent);
-    if (idx !== -1) outputVec[idx] = 1;
-    nn.train(inputVec, outputVec);
-  }
-  await saveModel(nn.toJSON());
-  return { message: `مدل با ${dataset.length} نمونه به‌روزرسانی شد.` };
-}
-
-// پیش‌بینی intent
-function predictIntent(text) {
-  if (!nn) return getIntentFallback(text);
-  try {
-    const inputVec = vectorizer.vectorize(text);
-    const output = nn.predict(inputVec);
-    const maxIndex = output.indexOf(Math.max(...output));
-    return INTENT_LABELS[maxIndex] || 'general';
-  } catch (e) {
-    return getIntentFallback(text);
-  }
-}
-
-// قوانین دستی (fallback)
-function getIntentFallback(msg) {
+// ---------- تشخیص Intent با قوانین قدرتمند ----------
+function getIntent(msg) {
   const lower = msg.toLowerCase();
   if (/^(سلام|درود|hello|hi|hey|خوبی|چطوری)/.test(lower)) return 'greeting';
   if (/^(خداحافظ|bye|goodbye|می‌بینمت)/.test(lower)) return 'farewell';
@@ -88,7 +10,7 @@ function getIntentFallback(msg) {
   return 'general';
 }
 
-// ابزارهای تحلیل
+// ---------- ابزارهای تحلیل دو زبانه ----------
 function tokenize(text) { return text.match(/[آ-یa-z0-9]+/gi) || []; }
 function normalizePersian(word) { return word.replace(/(ها|های|انه|ی|ات|ان|ین)$/, ''); }
 
@@ -131,9 +53,9 @@ function analyzeBilingual(text) {
   return { sentiment, dominant, keywords: tokens.slice(0,5).join(', ') || '--' };
 }
 
+// ---------- تابع اصلی چت (فقط Rule-Based) ----------
 async function processMessage(message, sessionId) {
-  if (!modelReady) await new Promise(r => setTimeout(r, 50));
-  const intent = predictIntent(message);
+  const intent = getIntent(message);
 
   if (intent === 'analysis') {
     const { sentiment, dominant, keywords } = analyzeBilingual(message);
@@ -147,7 +69,4 @@ async function processMessage(message, sessionId) {
   }
 }
 
-// راه‌اندازی اولیه مدل
-initModel();
-
-module.exports = { processMessage, trainOnDataset };
+module.exports = { processMessage };

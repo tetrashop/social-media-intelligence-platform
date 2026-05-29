@@ -4,6 +4,7 @@ class NeuralNetwork {
     this.hiddenSize = hiddenSize;
     this.outputSize = outputSize;
     this.lr = learningRate;
+
     this.W1 = this.randomMatrix(inputSize, hiddenSize);
     this.b1 = Array(hiddenSize).fill(0.1);
     this.W2 = this.randomMatrix(hiddenSize, outputSize);
@@ -27,6 +28,7 @@ class NeuralNetwork {
   }
 
   predict(inputVec) {
+    if (inputVec.length !== this.inputSize) throw new Error('input size mismatch');
     const z1 = Array.from({ length: this.hiddenSize }, (_, j) => {
       let sum = this.b1[j];
       for (let i = 0; i < this.inputSize; i++) sum += inputVec[i] * this.W1[i][j];

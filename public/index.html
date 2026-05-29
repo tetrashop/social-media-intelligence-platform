@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>نگار کوانتا | دستیار هوشمند</title>
+  <title>نگار کوانتا</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Tahoma, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
@@ -36,8 +36,7 @@
       gap: 0.8rem;
     }
     .chat-header .avatar {
-      width: 45px;
-      height: 45px;
+      width: 45px; height: 45px;
       background: rgba(255,255,255,0.2);
       border-radius: 50%;
       display: flex;
@@ -45,14 +44,8 @@
       justify-content: center;
       font-size: 1.6rem;
     }
-    .chat-header .info h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-    .chat-header .info span {
-      font-size: 0.8rem;
-      opacity: 0.9;
-    }
+    .chat-header .info h3 { font-size: 1.2rem; font-weight: 600; }
+    .chat-header .info span { font-size: 0.8rem; opacity: 0.9; }
     .chat-messages {
       flex: 1;
       overflow-y: auto;
@@ -62,14 +55,8 @@
       gap: 1rem;
       background: #f8f9fc;
     }
-    .message {
-      display: flex;
-      gap: 0.6rem;
-      animation: fadeIn 0.3s ease;
-    }
-    .message.user {
-      justify-content: flex-end;
-    }
+    .message { display: flex; gap: 0.6rem; animation: fadeIn 0.3s ease; }
+    .message.user { justify-content: flex-end; }
     .message .bubble {
       max-width: 80%;
       padding: 0.9rem 1.2rem;
@@ -91,8 +78,7 @@
       box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
     .message .icon {
-      width: 38px;
-      height: 38px;
+      width: 38px; height: 38px;
       border-radius: 50%;
       background: #eef2ff;
       display: flex;
@@ -101,11 +87,7 @@
       font-size: 1.2rem;
       flex-shrink: 0;
     }
-    .message.user .icon {
-      background: #667eea;
-      color: white;
-      order: 1;
-    }
+    .message.user .icon { background: #667eea; color: white; order: 1; }
     .chat-input {
       padding: 1rem 1.5rem;
       background: white;
@@ -134,40 +116,22 @@
       background: #667eea;
       border: none;
       color: white;
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border-radius: 12px;
       cursor: pointer;
       font-size: 1.3rem;
       transition: background 0.2s, transform 0.1s;
       flex-shrink: 0;
     }
-    .chat-input button:hover {
-      background: #5a6fd6;
-    }
-    .chat-input button:active {
-      transform: scale(0.95);
-    }
+    .chat-input button:hover { background: #5a6fd6; }
+    .chat-input button:active { transform: scale(0.95); }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* اسکرول بار زیبا */
-    .chat-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: #c4b5fd;
-      border-radius: 10px;
-    }
-    .typing-indicator {
-      display: flex;
-      gap: 0.4rem;
-      padding: 0.5rem 1rem;
-    }
+    .typing-indicator { display: flex; gap: 0.4rem; padding: 0.5rem 1rem; }
     .typing-indicator span {
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       background: #a0aec0;
       border-radius: 50%;
       animation: bounce 1.4s infinite ease-in-out;
@@ -212,39 +176,24 @@
       const message = userInput.value.trim();
       if (!message) return;
 
-      // پیام کاربر
       addMessage('user', message);
       userInput.value = '';
       userInput.style.height = 'auto';
 
-      // تایپینگ
       const typingDiv = addTypingIndicator();
 
       try {
-        const url = '/api/chat/message?t=' + Date.now();
-        const response = await fetch(url, {
+        const res = await fetch('/api/chat/message', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message, sessionId })
         });
-        const data = await response.json();
-
-        // حذف تایپینگ
+        const data = await res.json();
         typingDiv.remove();
-
-        let botReply = 'پاسخی دریافت نشد.';
-        if (data && typeof data.response === 'string' && data.response.length > 0) {
-          botReply = data.response;
-        } else if (data && data.error) {
-          botReply = '⚠️ ' + data.error;
-        }
-        addMessage('assistant', botReply);
+        addMessage('assistant', data.response || 'پاسخی دریافت نشد.');
       } catch (err) {
         typingDiv.remove();
-        addMessage('assistant', '🚫 خطا در ارتباط با سرور.');
+        addMessage('assistant', '🚫 خطا در ارتباط');
       }
     }
 
@@ -252,10 +201,7 @@
       const div = document.createElement('div');
       div.className = 'message ' + role;
       const icon = role === 'user' ? '👤' : '🤖';
-      div.innerHTML = `
-        <div class="icon">${icon}</div>
-        <div class="bubble">${escapeHtml(text)}</div>
-      `;
+      div.innerHTML = `<div class="icon">${icon}</div><div class="bubble">${escapeHtml(text)}</div>`;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
@@ -281,13 +227,11 @@
       return text.replace(/[&<>"']/g, m => map[m]);
     }
 
-    // تنظیم ارتفاع خودکار textarea
     userInput.addEventListener('input', function() {
       this.style.height = 'auto';
       this.style.height = Math.min(this.scrollHeight, 100) + 'px';
     });
 
-    // ارسال با Enter (شیفت+اینتر برای خط جدید)
     userInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
