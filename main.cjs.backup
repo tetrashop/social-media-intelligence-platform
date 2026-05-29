@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const path = require('path');
+const { initDatabase } = require('./database');
 const chatRouter = require('./routes/chat');
 
 const app = express();
@@ -24,12 +25,18 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// فقط در محیط محلی پورت را گوش کند
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 نگار کوانتا روی http://localhost:${PORT} فعال شد`);
-  });
-}
+// مقداردهی اولیه دیتابیس (به‌صورت async)
+const startServer = async () => {
+  await initDatabase();
+  if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 نگار کوانتا روی http://localhost:${PORT} فعال شد`);
+    });
+  }
+};
 
+startServer();
+
+// برای Vercel اکسپورت می‌شود
 module.exports = app;

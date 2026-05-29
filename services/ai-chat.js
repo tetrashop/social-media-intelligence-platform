@@ -1,14 +1,13 @@
-// موتور دو زبانه (فارسی + انگلیسی) بدون وابستگی به هیچ API خارجی
-const natural = require('natural');
-
-function simpleTokenize(text) {
+// موتور کاملاً خالص – بدون هیچ کتابخانهٔ خارجی
+// توکنایزر ساده برای فارسی و انگلیسی
+function tokenize(text) {
   return text.match(/[آ-یa-z0-9]+/gi) || [];
 }
 function normalizePersian(word) {
   return word.replace(/(ها|های|انه|ی|ات|ان|ین)$/, '');
 }
 
-// ---------- تشخیص intent ----------
+// تشخیص intent
 function getIntent(msg) {
   const lower = msg.toLowerCase();
   if (/^(سلام|درود|hello|hi|hey|خوبی|چطوری)/.test(lower)) return 'greeting';
@@ -20,7 +19,7 @@ function getIntent(msg) {
   return 'general';
 }
 
-// ---------- پاسخ‌های متنوع ----------
+// پاسخ‌های متنوع
 const replies = {
   greeting: ['سلام! حالت چطوره؟', 'درود بر تو! چطور می‌تونم کمک کنم؟', 'سلام! خوشحالم که هستی.'],
   farewell: ['خدانگهدار! روز خوبی داشته باشی.', 'بدرود! هر وقت خواستی برگرد.', 'مراقب خودت باش، تا بعد!'],
@@ -30,32 +29,26 @@ const replies = {
 };
 function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-// ---------- کلمات مثبت / منفی (فارسی + انگلیسی) ----------
-const positiveWords = [
-  'خوب', 'عالی', 'خوشحال', 'خوش', 'شاد', 'مثبت', 'فوق‌العاده', 'خوشبخت',
-  'good', 'great', 'happy', 'excellent', 'positive', 'fantastic', 'wonderful', 'joy'
-];
-const negativeWords = [
-  'بد', 'ناراحت', 'غمگین', 'عصبی', 'استرس', 'نگران', 'ترس', 'متأسف',
-  'bad', 'sad', 'angry', 'anxious', 'nervous', 'upset', 'terrible', 'awful'
-];
+// کلمات مثبت/منفی (فارسی + انگلیسی)
+const positiveWords = ['خوب','عالی','خوشحال','خوش','شاد','مثبت','فوق‌العاده','good','great','happy','excellent','positive','fantastic','wonderful','joy'];
+const negativeWords = ['بد','ناراحت','غمگین','عصبی','استرس','نگران','bad','sad','angry','anxious','nervous','upset','terrible','awful'];
 
-// ---------- کلمات شخصیت (فارسی + انگلیسی) ----------
+// کلمات شخصیت (فارسی + انگلیسی)
 const traitWords = {
-  openness: ['خلاق', 'ایده', 'جدید', 'ماجراجو', 'ماجراجویی', 'curious', 'creative', 'idea', 'new', 'adventure', 'کنجکاو', 'نوآور'],
-  conscientiousness: ['منظم', 'مسئول', 'دقیق', 'organized', 'responsible', 'plan', 'برنامه', 'وظیفه‌شناس'],
-  extraversion: ['اجتماعی', 'پرانرژی', 'صحبت', 'پرحرف', 'social', 'energetic', 'talkative', 'outgoing', 'برون‌گرا'],
-  agreeableness: ['مهربان', 'همکار', 'دلسوز', 'همدل', 'kind', 'cooperative', 'warm', 'سازگار', 'خوش‌برخورد'],
-  neuroticism: ['نگران', 'عصبی', 'استرس', 'مضطرب', 'anxious', 'nervous', 'stress', 'ناراحت', 'روان‌رنجور']
+  openness: ['خلاق','ایده','جدید','ماجراجو','curious','creative','idea','new','adventure'],
+  conscientiousness: ['منظم','مسئول','دقیق','organized','responsible','plan'],
+  extraversion: ['اجتماعی','پرانرژی','صحبت','social','energetic','talkative','outgoing'],
+  agreeableness: ['مهربان','همکار','دلسوز','kind','cooperative','warm'],
+  neuroticism: ['نگران','عصبی','استرس','anxious','nervous','stress']
 };
 
 function analyzeBilingual(text) {
-  const tokens = simpleTokenize(text);
+  const tokens = tokenize(text);
   const total = tokens.length || 1;
-
   const normalized = tokens.map(t => {
     if (/[a-zA-Z]/.test(t)) {
-      return natural.PorterStemmer.stem(t.toLowerCase());
+      // ساده‌سازی انگلیسی: حذف پسوندهای رایج
+      return t.toLowerCase().replace(/(ing|ed|s|ly|ment|tion)$/, '');
     } else {
       return normalizePersian(t);
     }
@@ -63,30 +56,24 @@ function analyzeBilingual(text) {
 
   let posCount = 0, negCount = 0;
   normalized.forEach(t => {
-    if (positiveWords.some(w => w === t || w.startsWith(t) || t.startsWith(w))) posCount++;
-    if (negativeWords.some(w => w === t || w.startsWith(t) || t.startsWith(w))) negCount++;
+    if (positiveWords.some(w => t === w || t.startsWith(w))) posCount++;
+    if (negativeWords.some(w => t === w || t.startsWith(w))) negCount++;
   });
   let sentiment = 0;
-  if (posCount + negCount > 0) {
-    sentiment = (posCount - negCount) / (posCount + negCount);
-  }
-  sentiment = sentiment.toFixed(2);
+  if (posCount + negCount > 0) sentiment = (posCount - negCount) / (posCount + negCount);
+  const sentimentStr = sentiment.toFixed(2);
 
   let scores = {};
   for (const [trait, keywords] of Object.entries(traitWords)) {
-    const count = normalized.filter(t =>
-      keywords.some(w => w === t || w.startsWith(t) || t.startsWith(w))
-    ).length;
+    const count = normalized.filter(t => keywords.some(w => t === w || t.startsWith(w))).length;
     scores[trait] = count / total;
   }
-  const sum = Object.values(scores).reduce((a, b) => a + b, 0);
-  if (sum === 0) {
-    scores = { openness: 0.2, conscientiousness: 0.2, extraversion: 0.2, agreeableness: 0.2, neuroticism: 0.2 };
-  }
-  const dominant = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-  const keywords = tokens.slice(0, 5).join(', ') || '--';
+  const sum = Object.values(scores).reduce((a,b)=>a+b,0);
+  if (sum === 0) scores = { openness:0.2, conscientiousness:0.2, extraversion:0.2, agreeableness:0.2, neuroticism:0.2 };
+  const dominant = Object.keys(scores).reduce((a,b)=>scores[a]>scores[b]?a:b);
+  const keywords = tokens.slice(0,5).join(', ') || '--';
 
-  return { sentiment, dominant, keywords };
+  return { sentiment: sentimentStr, dominant, keywords };
 }
 
 async function processMessage(message, sessionId) {
