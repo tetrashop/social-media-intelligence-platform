@@ -53,7 +53,6 @@ function analyzeBilingual(text) {
   return { sentiment, dominant, keywords: tokens.slice(0,5).join(', ') || '--' };
 }
 
-// ---------- تابع اصلی چت (فقط Rule-Based) ----------
 async function processMessage(message, sessionId) {
   const intent = getIntent(message);
 
