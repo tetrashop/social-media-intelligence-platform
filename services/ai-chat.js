@@ -1,16 +1,51 @@
-// ---------- تشخیص Intent با قوانین قدرتمند ----------
-function getIntent(msg) {
+const fs = require('fs');
+const path = require('path');
+const { NeuralNetwork, TextVectorizer, DEFAULT_VOCABULARY, INTENT_LABELS } = require('./deep-learning');
+
+// بارگذاری مدل از پیش‌آموزش‌دیده (در صورت وجود)
+let nn = null;
+const MODEL_PATH = path.join(__dirname, '..', 'data', 'deep-model.json');
+try {
+  if (fs.existsSync(MODEL_PATH)) {
+    const modelJson = JSON.parse(fs.readFileSync(MODEL_PATH, 'utf-8'));
+    nn = NeuralNetwork.fromJSON(modelJson);
+    console.log('✓ مدل یادگیری عمیق از فایل JSON بارگذاری شد');
+  } else {
+    console.log('ℹ️ مدل از پیش‌آموزش‌دیده یافت نشد، استفاده از قوانین دستی');
+  }
+} catch (e) {
+  console.error('خطا در بارگذاری مدل:', e.message);
+  nn = null;
+}
+
+const vectorizer = new TextVectorizer(DEFAULT_VOCABULARY);
+
+// پیش‌بینی با شبکهٔ عصبی (اگر مدل وجود داشته باشد)
+function predictIntent(text) {
+  if (!nn) return getIntentFallback(text);
+  try {
+    const inputVec = vectorizer.vectorize(text);
+    const output = nn.predict(inputVec);
+    const maxIndex = output.indexOf(Math.max(...output));
+    return INTENT_LABELS[maxIndex] || 'general';
+  } catch (e) {
+    return getIntentFallback(text);
+  }
+}
+
+// قوانین دستی (fallback)
+function getIntentFallback(msg) {
   const lower = msg.toLowerCase();
-  if (/^(سلام|درود|hello|hi|hey|خوبی|چطوری)/.test(lower)) return 'greeting';
-  if (/^(خداحافظ|bye|goodbye|می‌بینمت)/.test(lower)) return 'farewell';
-  if (/(ممنون|مرسی|thanks|thank)/.test(lower)) return 'thanks';
-  if (/(کمک|راهنما|help)/.test(lower)) return 'help';
-  if (/(تو کی هستی|about|درباره)/.test(lower)) return 'about';
-  if (/(تحلیل|analyz|بررسی)/.test(lower)) return 'analysis';
+  if (/^(سلام|درود|hello|hi|hey|خوبی|چطوری|صبح بخیر|عصر بخیر)/.test(lower)) return 'greeting';
+  if (/^(خداحافظ|bye|goodbye|می‌بینمت|تا بعد|شب خوش)/.test(lower)) return 'farewell';
+  if (/(ممنون|مرسی|thanks|thank|سپاسگزارم|دستت درد نکنه)/.test(lower)) return 'thanks';
+  if (/(کمک|راهنما|help|چیکار می‌تونی|چه امکاناتی|what can you)/.test(lower)) return 'help';
+  if (/(تو کی هستی|about|who are you|درباره تو|خودت رو معرفی|اسمت چیه)/.test(lower)) return 'about';
+  if (/(تحلیل|analyz|بررسی|این جمله رو تحلیل|احساس من|شخصیت من)/.test(lower)) return 'analysis';
   return 'general';
 }
 
-// ---------- ابزارهای تحلیل دو زبانه ----------
+// ---------- ابزارهای تحلیل (همان قبلی) ----------
 function tokenize(text) { return text.match(/[آ-یa-z0-9]+/gi) || []; }
 function normalizePersian(word) { return word.replace(/(ها|های|انه|ی|ات|ان|ین)$/, ''); }
 
@@ -54,7 +89,7 @@ function analyzeBilingual(text) {
 }
 
 async function processMessage(message, sessionId) {
-  const intent = getIntent(message);
+  const intent = predictIntent(message);
 
   if (intent === 'analysis') {
     const { sentiment, dominant, keywords } = analyzeBilingual(message);
