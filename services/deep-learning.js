@@ -1,3 +1,12 @@
+// تلاش برای بارگذاری mathjs – اگر نبود، از توابع دستی استفاده می‌کنیم
+let math;
+try {
+  math = require('mathjs');
+} catch (e) {
+  // mathjs در دسترس نیست – مشکلی نیست، توابع جایگزین داریم
+}
+
+// کلاس‌های اصلی
 class NeuralNetwork {
   constructor(inputSize, hiddenSize, outputSize, learningRate = 0.1) {
     this.inputSize = inputSize;
@@ -21,7 +30,8 @@ class NeuralNetwork {
   sigmoidDerivative(x) { return x * (1 - x); }
 
   softmax(arr) {
-    const exp = arr.map(v => Math.exp(v - Math.max(...arr)));
+    const max = Math.max(...arr);
+    const exp = arr.map(v => Math.exp(v - max));
     const sum = exp.reduce((a, b) => a + b, 0);
     return exp.map(v => v / sum);
   }
@@ -57,7 +67,7 @@ class NeuralNetwork {
 
     const outputErrors = targetVec.map((t, i) => t - output[i]);
 
-    // gradients for W2, b2
+    // gradients
     const dW2 = Array.from({ length: this.hiddenSize }, () => Array(this.outputSize).fill(0));
     const db2 = Array(this.outputSize).fill(0);
     for (let i = 0; i < this.hiddenSize; i++) {
@@ -67,7 +77,6 @@ class NeuralNetwork {
     }
     for (let j = 0; j < this.outputSize; j++) db2[j] = this.lr * outputErrors[j];
 
-    // hidden errors
     const hiddenErrors = Array(this.hiddenSize).fill(0);
     for (let i = 0; i < this.hiddenSize; i++) {
       for (let j = 0; j < this.outputSize; j++) {
@@ -76,7 +85,6 @@ class NeuralNetwork {
       hiddenErrors[i] *= this.sigmoidDerivative(z1[i]);
     }
 
-    // gradients for W1, b1
     const dW1 = Array.from({ length: this.inputSize }, () => Array(this.hiddenSize).fill(0));
     const db1 = Array(this.hiddenSize).fill(0);
     for (let i = 0; i < this.inputSize; i++) {
