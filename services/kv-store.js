@@ -15,14 +15,17 @@ try {
   console.log('KV در دسترس نیست، استفاده از ذخیره‌سازی محلی');
 }
 
-const LOCAL_MODEL_PATH = path.join(__dirname, '..', 'data', 'deep-model.json');
+// در Vercel از /tmp استفاده می‌کنیم
+const LOCAL_MODEL_DIR = process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, '..', 'data');
+const LOCAL_MODEL_PATH = path.join(LOCAL_MODEL_DIR, 'deep-model.json');
 
 async function saveModel(modelJson) {
   if (kv) {
     await kv.set('deep_model', JSON.stringify(modelJson));
   } else {
-    const dir = path.dirname(LOCAL_MODEL_PATH);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(LOCAL_MODEL_DIR)) {
+      fs.mkdirSync(LOCAL_MODEL_DIR, { recursive: true });
+    }
     fs.writeFileSync(LOCAL_MODEL_PATH, JSON.stringify(modelJson));
   }
   console.log('✓ مدل ذخیره شد');
