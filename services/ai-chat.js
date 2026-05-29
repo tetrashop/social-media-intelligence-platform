@@ -2,25 +2,29 @@ const { NeuralNetwork, TextVectorizer, DEFAULT_VOCABULARY, INTENT_LABELS } = req
 const { saveModel, loadModel } = require('./kv-store');
 
 let nn = null;
-let vectorizer = new TextVectorizer(DEFAULT_VOCABULARY);
+const vectorizer = new TextVectorizer(DEFAULT_VOCABULARY);
+let modelReady = false;
 
+// بارگذاری یا ساخت مدل
 async function initModel() {
   try {
     const saved = await loadModel();
     if (saved) {
       nn = NeuralNetwork.fromJSON(saved);
-      console.log('✓ مدل یادگیری عمیق بارگذاری شد');
+      console.log('✓ مدل از حافظه بارگذاری شد');
     } else {
       nn = new NeuralNetwork(DEFAULT_VOCABULARY.length, 12, INTENT_LABELS.length, 0.1);
-      console.log('✓ مدل جدید ساخته شد');
+      console.log('✓ مدل جدید ساخته شد (آموزش اولیه انجام می‌شود)');
       await trainDefaultExamples();
     }
   } catch (e) {
-    console.error('خطای مدل:', e);
+    console.error('خطای بارگذاری مدل:', e);
     nn = null;
   }
+  modelReady = true;
 }
 
+// آموزش اولیه روی داده‌های پیش‌فرض
 async function trainDefaultExamples() {
   const examples = [
     { text: 'سلام', intent: 'greeting' }, { text: 'hello', intent: 'greeting' },
@@ -44,6 +48,22 @@ async function trainDefaultExamples() {
   console.log('✓ آموزش اولیه ذخیره شد');
 }
 
+// تابع عمومی برای آموزش با دیتاست خارجی
+async function trainOnDataset(dataset) {
+  if (!nn) throw new Error('مدل هنوز آماده نیست');
+  for (const item of dataset) {
+    if (!item.text || !item.intent) continue;
+    const inputVec = vectorizer.vectorize(item.text);
+    const outputVec = Array(INTENT_LABELS.length).fill(0);
+    const idx = INTENT_LABELS.indexOf(item.intent);
+    if (idx !== -1) outputVec[idx] = 1;
+    nn.train(inputVec, outputVec);
+  }
+  await saveModel(nn.toJSON());
+  return { message: `مدل با ${dataset.length} نمونه به‌روزرسانی شد.` };
+}
+
+// پیش‌بینی intent
 function predictIntent(text) {
   if (!nn) return getIntentFallback(text);
   try {
@@ -56,6 +76,7 @@ function predictIntent(text) {
   }
 }
 
+// قوانین دستی (fallback)
 function getIntentFallback(msg) {
   const lower = msg.toLowerCase();
   if (/^(سلام|درود|hello|hi|hey|خوبی|چطوری)/.test(lower)) return 'greeting';
@@ -110,9 +131,6 @@ function analyzeBilingual(text) {
   return { sentiment, dominant, keywords: tokens.slice(0,5).join(', ') || '--' };
 }
 
-let modelReady = false;
-initModel().then(() => { modelReady = true; });
-
 async function processMessage(message, sessionId) {
   if (!modelReady) await new Promise(r => setTimeout(r, 50));
   const intent = predictIntent(message);
@@ -129,4 +147,7 @@ async function processMessage(message, sessionId) {
   }
 }
 
-module.exports = { processMessage };
+// راه‌اندازی اولیه مدل
+initModel();
+
+module.exports = { processMessage, trainOnDataset };

@@ -6,7 +6,6 @@ const path = require('path');
 const chatRouter = require('./routes/chat');
 
 const app = express();
-
 app.use(cors());
 app.use(compression());
 app.use(express.json());
@@ -18,18 +17,12 @@ app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'adm
 app.get('/chat', (req, res) => res.redirect('/'));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
-app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal server error' });
-});
+app.use((req, res) => res.status(404).json({ error: 'Not found' }));
+app.use((err, req, res, next) => res.status(500).json({ error: 'Server error' }));
 
-// فقط در محیط محلی پورت را گوش کند
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 نگار کوانتا روی http://localhost:${PORT} فعال شد`);
-  });
+  app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
 }
 
 module.exports = app;
