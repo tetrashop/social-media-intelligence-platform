@@ -19,7 +19,11 @@ function saveToFile() {
 async function initDatabase() {
   if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
 
-  const SQL = await initSqlJs();
+  // بارگذاری SQL.js با فایل wasm از CDN (برای سازگاری با Vercel)
+  const SQL = await initSqlJs({
+    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+  });
+
   if (fs.existsSync(DB_FILE)) {
     const fileBuffer = fs.readFileSync(DB_FILE);
     db = new SQL.Database(fileBuffer);
