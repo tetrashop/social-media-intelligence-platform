@@ -1,11 +1,3 @@
-// شبکه عصبی ساده (MLP) با قابلیت یادگیری و ذخیره‌سازی وزن‌ها
-// برای تشخیص intent (طبقه‌بندی متن)
-
-const math = require('mathjs');   // اگر mathjs ندارید، می‌توانید از توابع ساده استفاده کنید
-                                    // اما برای سادگی، ما اینجا یک پیاده‌سازی دستی ارائه می‌دهیم
-// در این نسخه، برای جلوگیری از وابستگی اضافی، از عملیات آرایه‌ای ساده استفاده می‌کنیم.
-// mathjs لازم نیست. کافی‌ست عملیات ماتریسی پایه را خودمان بنویسیم.
-
 class NeuralNetwork {
   constructor(inputSize, hiddenSize, outputSize, learningRate = 0.1) {
     this.inputSize = inputSize;
@@ -13,7 +5,6 @@ class NeuralNetwork {
     this.outputSize = outputSize;
     this.lr = learningRate;
 
-    // وزن‌ها (تصادفی اولیه)
     this.W1 = this.randomMatrix(inputSize, hiddenSize);
     this.b1 = Array(hiddenSize).fill(0.1);
     this.W2 = this.randomMatrix(hiddenSize, outputSize);
@@ -26,27 +17,22 @@ class NeuralNetwork {
     );
   }
 
-  // توابع فعال‌سازی
   sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
   sigmoidDerivative(x) { return x * (1 - x); }
 
-  // Softmax برای خروجی
   softmax(arr) {
     const exp = arr.map(v => Math.exp(v - Math.max(...arr)));
     const sum = exp.reduce((a, b) => a + b, 0);
     return exp.map(v => v / sum);
   }
 
-  // پیش‌بینی
   predict(inputVec) {
-    if (inputVec.length !== this.inputSize) throw new Error('اندازه ورودی نادرست');
-    // لایه مخفی
+    if (inputVec.length !== this.inputSize) throw new Error('input size mismatch');
     const z1 = Array.from({ length: this.hiddenSize }, (_, j) => {
       let sum = this.b1[j];
       for (let i = 0; i < this.inputSize; i++) sum += inputVec[i] * this.W1[i][j];
       return this.sigmoid(sum);
     });
-    // لایه خروجی
     const z2 = Array.from({ length: this.outputSize }, (_, j) => {
       let sum = this.b2[j];
       for (let i = 0; i < this.hiddenSize; i++) sum += z1[i] * this.W2[i][j];
@@ -55,9 +41,8 @@ class NeuralNetwork {
     return this.softmax(z2);
   }
 
-  // آموزش یک نمونه (ورودی، خروجی مورد انتظار)
   train(inputVec, targetVec) {
-    // Forward
+    // forward
     const z1 = Array.from({ length: this.hiddenSize }, (_, j) => {
       let sum = this.b1[j];
       for (let i = 0; i < this.inputSize; i++) sum += inputVec[i] * this.W1[i][j];
@@ -70,11 +55,9 @@ class NeuralNetwork {
     });
     const output = this.softmax(z2);
 
-    // خطا
     const outputErrors = targetVec.map((t, i) => t - output[i]);
 
-    // Backpropagation
-    // گرادیان لایه خروجی (بدون مشتق softmax، چون با خطای تفاضلی کار می‌کنیم)
+    // gradients for W2, b2
     const dW2 = Array.from({ length: this.hiddenSize }, () => Array(this.outputSize).fill(0));
     const db2 = Array(this.outputSize).fill(0);
     for (let i = 0; i < this.hiddenSize; i++) {
@@ -84,7 +67,7 @@ class NeuralNetwork {
     }
     for (let j = 0; j < this.outputSize; j++) db2[j] = this.lr * outputErrors[j];
 
-    // خطای لایه مخفی
+    // hidden errors
     const hiddenErrors = Array(this.hiddenSize).fill(0);
     for (let i = 0; i < this.hiddenSize; i++) {
       for (let j = 0; j < this.outputSize; j++) {
@@ -93,7 +76,7 @@ class NeuralNetwork {
       hiddenErrors[i] *= this.sigmoidDerivative(z1[i]);
     }
 
-    // گرادیان لایه ورودی
+    // gradients for W1, b1
     const dW1 = Array.from({ length: this.inputSize }, () => Array(this.hiddenSize).fill(0));
     const db1 = Array(this.hiddenSize).fill(0);
     for (let i = 0; i < this.inputSize; i++) {
@@ -103,7 +86,7 @@ class NeuralNetwork {
     }
     for (let j = 0; j < this.hiddenSize; j++) db1[j] = this.lr * hiddenErrors[j];
 
-    // به‌روزرسانی وزن‌ها
+    // update weights
     for (let i = 0; i < this.inputSize; i++)
       for (let j = 0; j < this.hiddenSize; j++)
         this.W1[i][j] += dW1[i][j];
@@ -116,7 +99,6 @@ class NeuralNetwork {
       this.b2[j] += db2[j];
   }
 
-  // ذخیره مدل به‌صورت JSON
   toJSON() {
     return {
       inputSize: this.inputSize,
@@ -130,7 +112,6 @@ class NeuralNetwork {
     };
   }
 
-  // بارگذاری از JSON
   static fromJSON(json) {
     const nn = new NeuralNetwork(json.inputSize, json.hiddenSize, json.outputSize, json.lr);
     nn.W1 = json.W1;
@@ -141,11 +122,9 @@ class NeuralNetwork {
   }
 }
 
-// ---------- کدنویسی متن به بردار ورودی ----------
-// یک روش ساده: Bag-of-Words با دیکشنری محدود
 class TextVectorizer {
   constructor(vocabulary) {
-    this.vocab = vocabulary; // آرایه‌ای از کلمات
+    this.vocab = vocabulary;
   }
 
   vectorize(text) {
@@ -159,7 +138,6 @@ class TextVectorizer {
   }
 }
 
-// دیکشنری پیش‌فرض (کلمات کلیدی نیت‌ها)
 const DEFAULT_VOCABULARY = [
   'سلام', 'hello', 'hi', 'hey', 'درود', 'خوبی', 'چطوری',
   'bye', 'goodbye', 'خداحافظ', 'می‌بینمت',
@@ -169,7 +147,6 @@ const DEFAULT_VOCABULARY = [
   'تحلیل', 'analyz', 'بررسی', 'احساس', 'شخصیت'
 ];
 
-// لیبل‌ها (خروجی‌ها) – تعداد = 6
 const INTENT_LABELS = ['greeting', 'farewell', 'thanks', 'help', 'about', 'analysis', 'general'];
 
 module.exports = { NeuralNetwork, TextVectorizer, DEFAULT_VOCABULARY, INTENT_LABELS };
