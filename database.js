@@ -3,21 +3,21 @@ const path = require('path');
 const initSqlJs = require('sql.js');
 
 let db;
-const DB_FILE = path.join(__dirname, 'data', 'platform.db');
+const DB_DIR = process.env.NODE_ENV === 'production' ? '/tmp' : path.join(__dirname, 'data');
+const DB_FILE = path.join(DB_DIR, 'platform.db');
 
 function saveToFile() {
   try {
+    if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
     const data = db.export();
-    const buffer = Buffer.from(data);
-    fs.writeFileSync(DB_FILE, buffer);
+    fs.writeFileSync(DB_FILE, Buffer.from(data));
   } catch (err) {
     console.error('خطا در ذخیره دیتابیس:', err);
   }
 }
 
 async function initDatabase() {
-  const dir = path.dirname(DB_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
 
   const SQL = await initSqlJs();
   if (fs.existsSync(DB_FILE)) {
@@ -36,14 +36,6 @@ async function initDatabase() {
       content TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
-  db.run(`CREATE TABLE IF NOT EXISTS social_analyses (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      url TEXT UNIQUE,
-      analysis TEXT,
-      sentiment REAL,
-      keywords TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`);
   saveToFile();
 
   db.runAsync = (sql, params) => {
@@ -52,9 +44,10 @@ async function initDatabase() {
   };
   db.getAsync = (sql, params) => {
     const stmt = db.prepare(sql);
-    const result = stepRow(stmt, params);
+    stmt.bind(params);
+    const row = stmt.step() ? stmt.getAsObject() : null;
     stmt.free();
-    return result;
+    return row;
   };
   db.allAsync = (sql, params) => {
     const stmt = db.prepare(sql);
@@ -64,17 +57,6 @@ async function initDatabase() {
     stmt.free();
     return rows;
   };
-}
-
-function stepRow(stmt, params) {
-  stmt.bind(params);
-  if (stmt.step()) {
-    const row = stmt.getAsObject();
-    stmt.reset();
-    return row;
-  }
-  stmt.reset();
-  return null;
 }
 
 function getDB() {
