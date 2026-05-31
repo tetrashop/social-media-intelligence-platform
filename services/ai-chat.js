@@ -9,7 +9,7 @@ try {
     nn = NeuralNetwork.fromJSON(JSON.parse(fs.readFileSync(MODEL_PATH, 'utf-8')));
     console.log('✓ مدل یادگیری عمیق بارگذاری شد');
   } else {
-    console.log('ℹ️ مدل از پیش‌آموزش‌دیده یافت نشد، استفاده از قوانین دستی');
+    console.log('ℹ️ مدل از پیش‌آموزش‌دیده یافت نشد');
   }
 } catch (e) {
   console.error('خطا در بارگذاری مدل:', e.message);
@@ -46,10 +46,10 @@ function normalizePersian(word) { return word.replace(/(ها|های|انه|ی|ا
 
 const positiveWords = [
   'خوب', 'عالی', 'خوشحال', 'خوش', 'شاد', 'مثبت', 'فوق‌العاده', 'خوشبخت', 'آرام',
-  'good', 'great', 'happy', 'excellent', 'positive', 'fantastic', 'wonderful', 'joy'
+  'good', 'great', 'happy', 'excellent', 'positive', 'fantastic', 'wonderful', 'joy', 'peaceful'
 ];
 const negativeWords = [
-  'بد', 'ناراحت', 'غمگین', 'عصبی', 'استرس', 'نگران', 'ترس', 'متأسف', 'خسته', 'سرد', 'درد',
+  'بد', 'ناراحت', 'غمگین', 'عصبی', 'استرس', 'نگران', 'ترس', 'متأسف', 'خسته', 'سرد', 'درد', 'بی‌حال',
   'bad', 'sad', 'angry', 'anxious', 'nervous', 'upset', 'terrible', 'awful', 'tired', 'cold'
 ];
 const traitWords = {
@@ -118,7 +118,7 @@ async function trainOnDataset(dataset) {
     nn.train(inputVec, outputVec);
   }
   await saveModel(nn.toJSON());
-  return { message: `مدل با ${dataset.length} نمونه به‌روزرسانی و ذخیره شد.` };
+  return { message: `مدل با ${dataset.length} نمونه به‌روز شد.` };
 }
 
 module.exports = { processMessage, trainOnDataset };

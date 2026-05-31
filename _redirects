@@ -1,3 +1,0 @@
-/chat    https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/chat    302
-/admin   https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/admin   302
-/api/*   https://social-media-intelligence-platform1.ramin-edjlal1359.workers.dev/api/:splat 200

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { processMessage } = require('../services/ai-chat');
+const { processMessage, trainOnDataset } = require('../services/ai-chat');
 
 router.post('/message', async (req, res) => {
   try {
@@ -13,6 +13,20 @@ router.post('/message', async (req, res) => {
   } catch (err) {
     console.error('Chat error:', err);
     res.status(500).json({ response: '⚠️ خطای داخلی سرور' });
+  }
+});
+
+router.post('/train', async (req, res) => {
+  try {
+    const { dataset } = req.body;
+    if (!dataset || !Array.isArray(dataset)) {
+      return res.status(400).json({ error: 'آرایه‌ای از { text, intent } ارسال کنید.' });
+    }
+    const result = await trainOnDataset(dataset);
+    res.json(result);
+  } catch (err) {
+    console.error('Train error:', err);
+    res.status(500).json({ error: err.message });
   }
 });
 

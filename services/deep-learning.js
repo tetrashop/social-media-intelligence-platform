@@ -4,7 +4,6 @@ class NeuralNetwork {
     this.hiddenSize = hiddenSize;
     this.outputSize = outputSize;
     this.lr = learningRate;
-
     this.W1 = this.randomMatrix(inputSize, hiddenSize);
     this.b1 = Array(hiddenSize).fill(0.1);
     this.W2 = this.randomMatrix(hiddenSize, outputSize);

@@ -209,14 +209,7 @@
     function addTypingIndicator() {
       const div = document.createElement('div');
       div.className = 'message assistant';
-      div.innerHTML = `
-        <div class="icon">🤖</div>
-        <div class="bubble">
-          <div class="typing-indicator">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-      `;
+      div.innerHTML = `<div class="icon">🤖</div><div class="bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>`;
       chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
       return div;

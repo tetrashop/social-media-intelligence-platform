@@ -1,17 +1,17 @@
 {
   "name": "social-media-intelligence-platform",
-  "version": "1.0.0",
-  "description": "نگار کوانتا – پلتفرم هوشمند تحلیل شبکه‌های اجتماعی",
+  "version": "2.0.0",
+  "description": "نگار کوانتا – پلتفرم هوشمند تحلیل شبکه‌های اجتماعی با یادگیری عمیق",
   "main": "main.cjs",
   "scripts": {
     "start": "node main.cjs",
-    "dev": "nodemon main.cjs"
+    "dev": "nodemon main.cjs",
+    "train": "node train-model.cjs"
   },
   "dependencies": {
     "compression": "^1.7.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.0"
-  },
-  "keywords": ["social-media", "ai", "nlp", "persian", "chatbot"]
+  }
 }
