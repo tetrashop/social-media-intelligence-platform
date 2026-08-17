@@ -72,3 +72,8 @@ MIT License
   <sub>ساخته شده با ❤️ توسط تیم TetraShop</sub>
 </div>
 <!-- Trigger deploy: Mon Aug 17 01:49:16 +0330 2026 -->
+
+## 🌐 دیپلوی
+
+- **URL:** [https://social-media-intelligence-platform.vercel.app](https://social-media-intelligence-platform.vercel.app)
+- **وضعیت:** ✅ فعال
